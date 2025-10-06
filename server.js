@@ -16,7 +16,7 @@ db.pragma('foreign_keys = ON');
 
 const { baseDrinks, baseIngredients } = require('./seed/defaultData');
 
-const SEED_VERSION = 1;
+const SEED_VERSION = 2;
 
 
 function migrate() {

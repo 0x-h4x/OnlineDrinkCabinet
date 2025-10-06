@@ -26,7 +26,11 @@ const elements = {
   drinksList: document.getElementById('drinks-list'),
   filterButtons: document.querySelectorAll('.drinks-filter .chip'),
   filterGroup: document.querySelector('.drinks-filter'),
-  drinkTemplate: document.getElementById('drink-template')
+  drinkTemplate: document.getElementById('drink-template'),
+  openDrinkDialog: document.getElementById('open-add-drink'),
+  cancelDrinkDialog: document.getElementById('cancel-add-drink'),
+  closeDrinkDialog: document.getElementById('close-add-drink'),
+  drinkDialog: document.getElementById('add-drink-dialog')
 };
 
 async function fetchJSON(url, options) {
@@ -402,7 +406,7 @@ function renderDrinks() {
   if (state.drinks.length === 0) {
     const empty = document.createElement('li');
     empty.className = 'empty-state';
-    empty.textContent = 'No drinks saved yet. Add one above to get started.';
+    empty.textContent = 'No drinks saved yet. Use the Add drink button to get started.';
     elements.drinksList.append(empty);
     return;
   }
