@@ -57,6 +57,32 @@
             <input type="text" id="drink-name" placeholder="e.g. French 75" required />
           </label>
           <label class="form-control">
+            <span>Ingredients</span>
+            <div class="ingredient-selector">
+              <ul
+                id="selected-ingredients"
+                class="selected-ingredients"
+                aria-live="polite"
+                aria-label="Selected ingredients"
+              ></ul>
+              <div class="selector-controls">
+                <input
+                  type="text"
+                  id="drink-ingredient-search"
+                  list="drink-ingredient-catalog"
+                  placeholder="Search ingredients"
+                  aria-describedby="drink-ingredient-help"
+                />
+                <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
+              </div>
+            </div>
+            <p class="field-help" id="drink-ingredient-help">
+              Search your fridge for existing ingredients or type a new one and press Add.
+            </p>
+            <input type="hidden" id="drink-ingredients" />
+          </label>
+        </div>
+        <datalist id="drink-ingredient-catalog"></datalist>
             <span>Ingredients <small>(separate with commas)</small></span>
             <input type="text" id="drink-ingredients" placeholder="Gin, Lemon juice, Simple syrup" required />
           </label>
@@ -68,6 +94,21 @@
         <button type="submit" class="primary-btn">Add drink</button>
       </form>
 
+      <div class="drink-toolbar">
+        <label class="drink-search">
+          <span class="sr-only">Search drinks</span>
+          <input
+            type="search"
+            id="drink-search"
+            placeholder="Search drinks or ingredients"
+            autocomplete="off"
+          />
+        </label>
+        <div class="drinks-filter" role="group" aria-label="Filter drinks">
+          <button type="button" data-filter="all" class="chip chip-active">All drinks</button>
+          <button type="button" data-filter="ready" class="chip">Ready to mix</button>
+          <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
+        </div>
       <div class="drinks-filter" role="group" aria-label="Filter drinks">
         <button type="button" data-filter="all" class="chip chip-active">All drinks</button>
         <button type="button" data-filter="ready" class="chip">Ready to mix</button>
