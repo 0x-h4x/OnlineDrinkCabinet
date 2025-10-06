@@ -10,6 +10,121 @@
   --pill-bg: #f1e4d3;
   --pill-text: #312517;
   --shadow: 0 18px 35px rgba(87, 57, 36, 0.1);
+  --bg-color: #faf7f2;
+  --body-gradient: radial-gradient(circle at top, rgba(255, 255, 255, 0.7), rgba(255, 237, 213, 0.6));
+  --icon-color: #7c5b4b;
+  --icon-hover-color: #d97706;
+  --text-secondary: #5f4b3c;
+  --text-subheading: #6c5b4b;
+  --text-label: #3c2f24;
+  --text-muted: #7c6a58;
+  --text-subtle: #9f8774;
+  --link-color: #d97706;
+  --inventory-text: #5f4b3c;
+  --ingredient-group-title: #8c6a49;
+  --summary-text: #8c6844;
+  --summary-marker: #d97706;
+  --chip-border: #e7c9aa;
+  --chip-bg: rgba(255, 255, 255, 0.8);
+  --chip-text: #6b4e32;
+  --chip-hover-bg: #fef3c7;
+  --chip-hover-text: #a16207;
+  --input-border: #d8c6b5;
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --secondary-btn-bg: rgba(255, 255, 255, 0.95);
+  --secondary-btn-border: #e7c9aa;
+  --secondary-btn-text: #9a4d1e;
+  --secondary-btn-hover-bg: #fef3c7;
+  --secondary-btn-hover-text: #a16207;
+  --pill-active-bg: #dcfce7;
+  --pill-active-text: #166534;
+  --pill-active-hover-bg: #bbf7d0;
+  --selector-border: rgba(216, 198, 181, 0.9);
+  --selector-bg: rgba(255, 255, 255, 0.8);
+  --empty-state-border: rgba(224, 178, 122, 0.7);
+  --empty-state-bg: rgba(255, 247, 237, 0.8);
+  --empty-state-text: #a16207;
+  --drink-card-border: rgba(231, 208, 182, 0.8);
+  --drink-card-bg: rgba(255, 255, 255, 0.85);
+  --drink-status: #7c5f45;
+  --badge-ready-bg: #dcfce7;
+  --badge-ready-text: #166534;
+  --badge-partial-bg: #fef3c7;
+  --badge-partial-text: #92400e;
+  --badge-missing-bg: #fee2e2;
+  --badge-missing-text: #b91c1c;
+  --ingredient-ready-bg: #f0fdf4;
+  --ingredient-ready-text: #14532d;
+  --ingredient-missing-bg: #fef2f2;
+  --ingredient-missing-text: #991b1b;
+  --missing-text: #92400e;
+  --theme-toggle-bg: rgba(255, 255, 255, 0.65);
+  --theme-toggle-border: rgba(231, 208, 182, 0.6);
+  --theme-toggle-hover-bg: rgba(255, 255, 255, 0.85);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  background-color: #110f0d;
+  color: #f8efe3;
+  --accent: #f97316;
+  --accent-muted: rgba(249, 115, 22, 0.35);
+  --card-bg: rgba(28, 24, 20, 0.85);
+  --card-border: #352b22;
+  --pill-bg: rgba(255, 255, 255, 0.08);
+  --pill-text: #f1e2d3;
+  --shadow: 0 22px 45px rgba(0, 0, 0, 0.45);
+  --bg-color: #110f0d;
+  --body-gradient: radial-gradient(circle at top, rgba(52, 43, 37, 0.8), rgba(17, 15, 13, 0.95));
+  --icon-color: #dacdbd;
+  --icon-hover-color: #f5b97f;
+  --text-secondary: #d0c3b3;
+  --text-subheading: #c2b5a4;
+  --text-label: #eadcca;
+  --text-muted: #b9ab99;
+  --text-subtle: #a69684;
+  --link-color: #f5b97f;
+  --inventory-text: #d0c3b3;
+  --ingredient-group-title: #cebfae;
+  --summary-text: #d4c7b7;
+  --summary-marker: #f5b97f;
+  --chip-border: #4c3f34;
+  --chip-bg: rgba(43, 36, 30, 0.85);
+  --chip-text: #e3d5c4;
+  --chip-hover-bg: rgba(249, 115, 22, 0.2);
+  --chip-hover-text: #f6cba1;
+  --input-border: #3f352b;
+  --input-bg: rgba(37, 32, 27, 0.85);
+  --secondary-btn-bg: rgba(44, 36, 30, 0.9);
+  --secondary-btn-border: #4f4034;
+  --secondary-btn-text: #f5d7b4;
+  --secondary-btn-hover-bg: rgba(97, 64, 36, 0.85);
+  --secondary-btn-hover-text: #ffd8a6;
+  --pill-active-bg: rgba(33, 71, 52, 0.7);
+  --pill-active-text: #d9f7e4;
+  --pill-active-hover-bg: rgba(47, 94, 68, 0.75);
+  --selector-border: rgba(108, 92, 78, 0.85);
+  --selector-bg: rgba(37, 32, 27, 0.85);
+  --empty-state-border: rgba(120, 83, 41, 0.7);
+  --empty-state-bg: rgba(52, 38, 28, 0.85);
+  --empty-state-text: #f6cba1;
+  --drink-card-border: rgba(68, 57, 47, 0.85);
+  --drink-card-bg: rgba(24, 20, 17, 0.9);
+  --drink-status: #c8b9a6;
+  --badge-ready-bg: rgba(33, 71, 52, 0.7);
+  --badge-ready-text: #bfeecf;
+  --badge-partial-bg: rgba(249, 115, 22, 0.25);
+  --badge-partial-text: #f6cba1;
+  --badge-missing-bg: rgba(185, 28, 28, 0.25);
+  --badge-missing-text: #fca5a5;
+  --ingredient-ready-bg: rgba(28, 48, 37, 0.9);
+  --ingredient-ready-text: #bfeecf;
+  --ingredient-missing-bg: rgba(67, 28, 28, 0.85);
+  --ingredient-missing-text: #fca5a5;
+  --missing-text: #f6cba1;
+  --theme-toggle-bg: rgba(43, 36, 30, 0.85);
+  --theme-toggle-border: rgba(255, 255, 255, 0.08);
+  --theme-toggle-hover-bg: rgba(64, 52, 43, 0.9);
 }
 
 * {
@@ -19,7 +134,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background-image: radial-gradient(circle at top, rgba(255, 255, 255, 0.7), rgba(255, 237, 213, 0.6));
+  background-color: var(--bg-color);
+  background-image: var(--body-gradient);
 }
 
 body.modal-open {
@@ -36,6 +152,10 @@ body.modal-open-fallback::after {
   pointer-events: auto;
 }
 
+:root[data-theme='dark'] body.modal-open-fallback::after {
+  background: rgba(0, 0, 0, 0.45);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -49,9 +169,14 @@ body.modal-open-fallback::after {
 }
 
 .app-header {
+  position: relative;
   text-align: center;
   padding: 3rem 1.5rem 2rem;
   background: linear-gradient(180deg, rgba(255, 244, 230, 0.9), rgba(255, 249, 244, 0));
+}
+
+:root[data-theme='dark'] .app-header {
+  background: linear-gradient(180deg, rgba(34, 29, 25, 0.85), rgba(17, 15, 13, 0));
 }
 
 .app-header h1 {
@@ -61,13 +186,63 @@ body.modal-open-fallback::after {
   letter-spacing: 0.03em;
 }
 
+.theme-toggle {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-toggle-bg);
+  border: 1px solid var(--theme-toggle-border);
+  color: var(--icon-color);
+  box-shadow: 0 12px 28px rgba(31, 27, 22, 0.15);
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  background: var(--theme-toggle-hover-bg);
+  color: var(--icon-hover-color);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  outline-offset: 2px;
+}
+
+.theme-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.theme-icon-sun {
+  display: none;
+}
+
+:root[data-theme='dark'] .theme-icon-sun {
+  display: inline;
+}
+
+:root[data-theme='dark'] .theme-icon-moon {
+  display: none;
+}
+
+:root[data-theme='dark'] .theme-toggle {
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+}
+
 .tagline {
   margin-top: 0.75rem;
   font-size: 1.05rem;
   max-width: 40rem;
   margin-left: auto;
   margin-right: auto;
-  color: #5f4b3c;
+  color: var(--text-secondary);
 }
 
 .app-layout {
@@ -95,7 +270,7 @@ body.modal-open-fallback::after {
 
 .section-header p {
   margin: 0.35rem 0 1.5rem;
-  color: #6c5b4b;
+  color: var(--text-subheading);
 }
 
 .form-grid {
@@ -121,29 +296,37 @@ body.modal-open-fallback::after {
   display: grid;
   gap: 0.35rem;
   font-weight: 500;
-  color: #3c2f24;
+  color: var(--text-label);
 }
 
 .field-help {
   margin: 0;
   font-weight: 400;
   font-size: 0.9rem;
-  color: #7c6a58;
+  color: var(--text-muted);
 }
 
 input,
 textarea,
+select,
 button {
   font: inherit;
 }
 
 input,
-textarea {
+textarea,
+select {
   padding: 0.7rem 0.85rem;
   border-radius: 10px;
-  border: 1px solid #d8c6b5;
-  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: inherit;
   transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-subtle);
 }
 
 .ingredient-selector {
@@ -159,13 +342,13 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  border: 1px dashed rgba(216, 198, 181, 0.9);
+  border: 1px dashed var(--selector-border);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--selector-bg);
 }
 
 .selector-empty {
-  color: #9f8774;
+  color: var(--text-subtle);
   font-weight: 400;
   font-size: 0.9rem;
 }
@@ -183,17 +366,17 @@ textarea {
 .secondary-btn {
   padding: 0.6rem 1rem;
   border-radius: 999px;
-  border: 1px solid #e7c9aa;
-  background: rgba(255, 255, 255, 0.95);
-  color: #9a4d1e;
+  border: 1px solid var(--secondary-btn-border);
+  background: var(--secondary-btn-bg);
+  color: var(--secondary-btn-text);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .secondary-btn:hover {
-  background: #fef3c7;
-  color: #a16207;
+  background: var(--secondary-btn-hover-bg);
+  color: var(--secondary-btn-hover-text);
   box-shadow: 0 6px 14px rgba(209, 134, 32, 0.2);
 }
 
@@ -216,7 +399,7 @@ textarea {
 .selector-pill .remove-pill {
   border: none;
   background: none;
-  color: #9a4d1e;
+  color: var(--secondary-btn-text);
   font-weight: 600;
   cursor: pointer;
   line-height: 1;
@@ -260,7 +443,7 @@ textarea:focus {
 .link-btn {
   background: none;
   border: none;
-  color: #d97706;
+  color: var(--link-color);
   font-weight: 600;
   cursor: pointer;
   padding: 0.25rem;
@@ -275,7 +458,7 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #5f4b3c;
+  color: var(--inventory-text);
 }
 
 .pill-list {
@@ -303,7 +486,7 @@ textarea:focus {
 .pill button {
   border: none;
   background: none;
-  color: #9a4d1e;
+  color: var(--secondary-btn-text);
   font-weight: 600;
   cursor: pointer;
 }
@@ -314,13 +497,17 @@ textarea:focus {
 }
 
 .pill-active {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--pill-active-bg);
+  color: var(--pill-active-text);
   box-shadow: 0 6px 16px rgba(22, 101, 52, 0.18);
 }
 
+:root[data-theme='dark'] .pill-active {
+  box-shadow: 0 6px 16px rgba(33, 71, 52, 0.28);
+}
+
 .pill-active:hover {
-  background: #bbf7d0;
+  background: var(--pill-active-hover-bg);
 }
 
 .ingredient-groups {
@@ -339,7 +526,7 @@ textarea:focus {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #8c6a49;
+  color: var(--ingredient-group-title);
 }
 
 .ingredient-group-list {
@@ -372,7 +559,7 @@ textarea:focus {
   top: 50%;
   transform: translateY(-50%);
   font-size: 1rem;
-  color: #9f8774;
+  color: var(--text-subtle);
   pointer-events: none;
 }
 
@@ -386,20 +573,20 @@ textarea:focus {
 }
 
 .chip {
-  border: 1px solid #e7c9aa;
-  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
   border-radius: 999px;
   padding: 0.4rem 0.95rem;
   cursor: pointer;
   font-weight: 500;
-  color: #6b4e32;
+  color: var(--chip-text);
   transition: background 0.2s ease, color 0.2s ease;
 }
 
 .chip-active,
 .chip:hover {
-  background: #fef3c7;
-  color: #a16207;
+  background: var(--chip-hover-bg);
+  color: var(--chip-hover-text);
 }
 
 .drinks-list {
@@ -408,6 +595,7 @@ textarea:focus {
   margin: 0;
   display: grid;
   gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .modal {
@@ -447,7 +635,7 @@ textarea:focus {
 .icon-btn {
   border: none;
   background: none;
-  color: #7c5b4b;
+  color: var(--icon-color);
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
@@ -455,7 +643,7 @@ textarea:focus {
 }
 
 .icon-btn:hover {
-  color: #d97706;
+  color: var(--icon-hover-color);
 }
 
 .modal-actions {
@@ -480,18 +668,18 @@ textarea:focus {
 .empty-state {
   padding: 1.5rem;
   border-radius: 16px;
-  border: 1px dashed rgba(224, 178, 122, 0.7);
-  background: rgba(255, 247, 237, 0.8);
-  color: #a16207;
+  border: 1px dashed var(--empty-state-border);
+  background: var(--empty-state-bg);
+  color: var(--empty-state-text);
   font-weight: 500;
   text-align: center;
 }
 
 .drink-card {
-  border: 1px solid rgba(231, 208, 182, 0.8);
+  border: 1px solid var(--drink-card-border);
   border-radius: 16px;
   padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--drink-card-bg);
   display: grid;
   gap: 0.75rem;
 }
@@ -511,7 +699,7 @@ textarea:focus {
 
 .drink-status {
   margin: 0.3rem 0 0;
-  color: #7c5f45;
+  color: var(--drink-status);
   font-weight: 500;
 }
 
@@ -525,28 +713,28 @@ textarea:focus {
 }
 
 .drink-badge.badge-ready {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--badge-ready-bg);
+  color: var(--badge-ready-text);
 }
 
 .drink-badge.badge-partial {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--badge-partial-bg);
+  color: var(--badge-partial-text);
 }
 
 .drink-badge.badge-missing {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--badge-missing-bg);
+  color: var(--badge-missing-text);
 }
 
 .drink-details summary {
   cursor: pointer;
   font-weight: 600;
-  color: #8c6844;
+  color: var(--summary-text);
 }
 
 .drink-details summary::marker {
-  color: #d97706;
+  color: var(--summary-marker);
 }
 
 .ingredient-list {
@@ -567,18 +755,18 @@ textarea:focus {
 }
 
 .ingredient-list li.ingredient-ready {
-  background: #f0fdf4;
-  color: #14532d;
+  background: var(--ingredient-ready-bg);
+  color: var(--ingredient-ready-text);
 }
 
 .ingredient-list li.ingredient-missing {
-  background: #fef2f2;
-  color: #991b1b;
+  background: var(--ingredient-missing-bg);
+  color: var(--ingredient-missing-text);
 }
 
 .missing-ingredients {
   margin: 0 0 0.75rem;
-  color: #92400e;
+  color: var(--missing-text);
   font-weight: 500;
 }
 
@@ -603,6 +791,11 @@ textarea:focus {
 @media (max-width: 600px) {
   .app-header {
     padding-top: 2.5rem;
+  }
+
+  .theme-toggle {
+    top: 1rem;
+    right: 1rem;
   }
 
   .card {
