@@ -66,15 +66,52 @@ function updateIngredientCatalog() {
   }
 }
 
+function updateDrinkAvailability(drinks, availability) {
+  return drinks.map((drink) => {
+    const ingredients = drink.ingredients.map((ingredient) => {
+      const inStock = availability.has(ingredient.id)
+        ? availability.get(ingredient.id)
+        : ingredient.inStock;
+      return { ...ingredient, inStock: !!inStock };
+    });
+
+    const total = ingredients.length;
+    const availableCount = ingredients.filter((item) => item.inStock).length;
+    const missingNames = ingredients.filter((item) => !item.inStock).map((item) => item.name);
+
+    return {
+      ...drink,
+      ingredients,
+      availability: {
+        total,
+        available: availableCount,
+        missing: missingNames
+      }
+    };
+  });
+}
+
 function syncDrinkAvailability() {
   const availability = new Map(state.ingredients.map((item) => [item.id, item.inStock]));
-  state.drinks = state.drinks.map((drink) => ({
-    ...drink,
-    ingredients: drink.ingredients.map((ingredient) => ({
-      ...ingredient,
-      inStock: availability.has(ingredient.id) ? availability.get(ingredient.id) : ingredient.inStock
-    }))
-  }));
+  state.drinks = updateDrinkAvailability(state.drinks, availability);
+}
+
+function renderIngredientPill(ingredient) {
+  const item = document.createElement('li');
+  item.className = `pill ${ingredient.inStock ? 'pill-active' : ''}`;
+  item.dataset.id = ingredient.id;
+  item.setAttribute('role', 'button');
+  item.tabIndex = 0;
+  item.title = ingredient.inStock ? 'Mark as out of stock' : 'Mark as in stock';
+  item.textContent = ingredient.name;
+  item.addEventListener('click', () => toggleIngredient(ingredient.id, !ingredient.inStock));
+  item.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleIngredient(ingredient.id, !ingredient.inStock);
+    }
+  });
+  return item;
 }
 
 function renderIngredients() {
@@ -99,21 +136,7 @@ function renderIngredients() {
 
   const sorted = [...state.ingredients].sort((a, b) => a.name.localeCompare(b.name));
   for (const ingredient of sorted) {
-    const item = document.createElement('li');
-    item.className = `pill ${ingredient.inStock ? 'pill-active' : ''}`;
-    item.dataset.id = ingredient.id;
-    item.setAttribute('role', 'button');
-    item.tabIndex = 0;
-    item.title = ingredient.inStock ? 'Mark as out of stock' : 'Mark as in stock';
-    item.textContent = ingredient.name;
-    item.addEventListener('click', () => toggleIngredient(ingredient.id, !ingredient.inStock));
-    item.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleIngredient(ingredient.id, !ingredient.inStock);
-      }
-    });
-    elements.ingredientList.append(item);
+    elements.ingredientList.append(renderIngredientPill(ingredient));
   }
 }
 
@@ -205,6 +228,25 @@ function resetDrinkForm() {
 }
 
 function summariseDrink(drink) {
+  if (drink.availability) {
+    const missingNames = new Set(
+      Array.isArray(drink.availability.missing)
+        ? drink.availability.missing.map((name) => name.toLowerCase())
+        : []
+    );
+    const missingFromList = drink.ingredients.filter((ingredient) =>
+      missingNames.has(ingredient.name.toLowerCase())
+    );
+    const total = drink.availability.total ?? drink.ingredients.length;
+    const available = drink.availability.available ?? drink.ingredients.length - missingFromList.length;
+    return {
+      total,
+      available,
+      missing: missingFromList,
+      ready: total > 0 && missingFromList.length === 0
+    };
+  }
+
   const total = drink.ingredients.length;
   const available = drink.ingredients.filter((ingredient) => ingredient.inStock).length;
   const missing = drink.ingredients.filter((ingredient) => !ingredient.inStock);
@@ -226,6 +268,55 @@ function shouldDisplayDrink(drink) {
     default:
       return true;
   }
+}
+
+function renderDrinkCard(drink) {
+  const node = elements.drinkTemplate.content.cloneNode(true);
+  const listItem = node.querySelector('.drink-card');
+  listItem.dataset.drinkId = drink.id;
+
+  const summary = summariseDrink(drink);
+
+  node.querySelector('.drink-title').textContent = drink.name;
+  node.querySelector('.drink-recipe').textContent = drink.instructions;
+
+  const status = node.querySelector('.drink-status');
+  const badge = node.querySelector('.drink-badge');
+  if (summary.ready) {
+    status.textContent = 'Ready to mix';
+    badge.textContent = 'Ready';
+    badge.className = 'drink-badge badge-ready';
+  } else if (summary.missing.length === summary.total) {
+    status.textContent = 'Missing every ingredient';
+    badge.textContent = 'Out';
+    badge.className = 'drink-badge badge-missing';
+  } else {
+    status.textContent = `Missing ${summary.missing.length} of ${summary.total}`;
+    badge.textContent = `${summary.available}/${summary.total}`;
+    badge.className = 'drink-badge badge-partial';
+  }
+
+  const ingredientList = node.querySelector('.ingredient-list');
+  ingredientList.innerHTML = '';
+  for (const ingredient of drink.ingredients) {
+    const ingredientItem = document.createElement('li');
+    ingredientItem.textContent = ingredient.name;
+    if (ingredient.inStock) {
+      ingredientItem.classList.add('ingredient-ready');
+    } else {
+      ingredientItem.classList.add('ingredient-missing');
+    }
+    ingredientList.append(ingredientItem);
+  }
+
+  const missingText = node.querySelector('.missing-ingredients');
+  if (summary.missing.length > 0) {
+    missingText.textContent = `Missing: ${summary.missing.map((item) => item.name).join(', ')}`;
+  } else {
+    missingText.textContent = 'Everything you need is on hand.';
+  }
+
+  return node;
 }
 
 function renderDrinks() {
@@ -250,53 +341,8 @@ function renderDrinks() {
     return;
   }
 
-  const template = elements.drinkTemplate.content;
   for (const drink of drinksToShow) {
-    const summary = summariseDrink(drink);
-    const node = template.cloneNode(true);
-    const listItem = node.querySelector('.drink-card');
-    listItem.dataset.drinkId = drink.id;
-
-    node.querySelector('.drink-title').textContent = drink.name;
-    node.querySelector('.drink-recipe').textContent = drink.instructions;
-
-    const status = node.querySelector('.drink-status');
-    const badge = node.querySelector('.drink-badge');
-    if (summary.ready) {
-      status.textContent = 'Ready to mix';
-      badge.textContent = 'Ready';
-      badge.className = 'drink-badge badge-ready';
-    } else if (summary.missing.length === summary.total) {
-      status.textContent = 'Missing every ingredient';
-      badge.textContent = 'Out';
-      badge.className = 'drink-badge badge-missing';
-    } else {
-      status.textContent = `Missing ${summary.missing.length} of ${summary.total}`;
-      badge.textContent = `${summary.available}/${summary.total}`;
-      badge.className = 'drink-badge badge-partial';
-    }
-
-    const ingredientList = node.querySelector('.ingredient-list');
-    ingredientList.innerHTML = '';
-    for (const ingredient of drink.ingredients) {
-      const ingredientItem = document.createElement('li');
-      ingredientItem.textContent = ingredient.name;
-      if (ingredient.inStock) {
-        ingredientItem.classList.add('ingredient-ready');
-      } else {
-        ingredientItem.classList.add('ingredient-missing');
-      }
-      ingredientList.append(ingredientItem);
-    }
-
-    const missingText = node.querySelector('.missing-ingredients');
-    if (summary.missing.length > 0) {
-      missingText.textContent = `Missing: ${summary.missing.map((item) => item.name).join(', ')}`;
-    } else {
-      missingText.textContent = 'Everything you need is on hand.';
-    }
-
-    elements.drinksList.append(node);
+    elements.drinksList.append(renderDrinkCard(drink));
   }
 }
 

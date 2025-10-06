@@ -276,6 +276,116 @@ function normaliseIngredientName(name) {
   return name.trim().replace(/\s+/g, ' ');
 }
 
+function validateDrinkPayload(payload = {}) {
+  const errors = [];
+  const name = typeof payload.name === 'string' ? normaliseIngredientName(payload.name) : '';
+  if (!name) {
+    errors.push('Drink name is required.');
+  }
+
+  const instructions = typeof payload.instructions === 'string' ? payload.instructions.trim() : '';
+  if (!instructions) {
+    errors.push('Instructions are required.');
+  }
+
+  const rawIngredients = Array.isArray(payload.ingredients) ? payload.ingredients : [];
+  const seen = new Set();
+  const ingredients = [];
+
+  for (const value of rawIngredients) {
+    if (typeof value !== 'string') continue;
+    const cleaned = normaliseIngredientName(value);
+    if (!cleaned) continue;
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    ingredients.push(cleaned);
+  }
+
+  if (ingredients.length === 0) {
+    errors.push('At least one ingredient is required.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    errors,
+    data: errors.length === 0 ? { name, instructions, ingredients } : null
+  };
+}
+
+const selectIngredientByName = db.prepare(
+  'SELECT id, name, category, in_stock as inStock FROM ingredients WHERE LOWER(name) = LOWER(?)'
+);
+const insertIngredient = db.prepare('INSERT INTO ingredients (name, category, in_stock) VALUES (?, ?, 0)');
+const updateIngredientCategory = db.prepare('UPDATE ingredients SET category = ? WHERE id = ?');
+
+function ensureIngredient(name, { category = null } = {}) {
+  const cleanedName = normaliseIngredientName(name);
+  if (!cleanedName) {
+    throw new Error('Ingredient name is required.');
+  }
+
+  const cleanedCategory = category && typeof category === 'string' ? normaliseIngredientName(category) : null;
+
+  let ingredient = selectIngredientByName.get(cleanedName);
+  if (ingredient) {
+    const currentCategory = ingredient.category || null;
+    if (
+      cleanedCategory &&
+      (!currentCategory || currentCategory.toLowerCase() !== cleanedCategory.toLowerCase())
+    ) {
+      updateIngredientCategory.run(cleanedCategory, ingredient.id);
+      ingredient = { ...ingredient, category: cleanedCategory };
+    }
+    return { ...ingredient, inStock: !!ingredient.inStock };
+  }
+
+  const insertResult = insertIngredient.run(cleanedName, cleanedCategory);
+  return {
+    id: insertResult.lastInsertRowid,
+    name: cleanedName,
+    category: cleanedCategory,
+    inStock: false
+  };
+}
+
+const selectDrinkById = db.prepare('SELECT id, name, instructions FROM drinks WHERE id = ?');
+const selectDrinkIngredients = db.prepare(`
+  SELECT i.id, i.name, i.category, i.in_stock as inStock
+  FROM drink_ingredients di
+  JOIN ingredients i ON i.id = di.ingredient_id
+  WHERE di.drink_id = ?
+  ORDER BY i.name COLLATE NOCASE
+`);
+
+function getDrinkWithAvailability(drinkId) {
+  const drink = selectDrinkById.get(drinkId);
+  if (!drink) return null;
+
+  const ingredients = selectDrinkIngredients.all(drinkId).map((row) => ({
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    inStock: !!row.inStock
+  }));
+
+  const total = ingredients.length;
+  const available = ingredients.filter((item) => item.inStock).length;
+  const missing = ingredients.filter((item) => !item.inStock);
+
+  return {
+    id: drink.id,
+    name: drink.name,
+    instructions: drink.instructions,
+    ingredients,
+    availability: {
+      total,
+      available,
+      missing: missing.map((item) => item.name)
+    }
+  };
+}
+
 app.get('/api/ingredients', (req, res) => {
   const ingredients = db
     .prepare('SELECT id, name, category, in_stock as inStock FROM ingredients ORDER BY name COLLATE NOCASE')
@@ -326,111 +436,46 @@ app.post('/api/ingredients/reset', (req, res) => {
 });
 
 app.get('/api/drinks', (req, res) => {
-  const drinks = db.prepare('SELECT id, name, instructions FROM drinks ORDER BY name COLLATE NOCASE').all();
-  const ingredientStmt = db.prepare(`
-    SELECT di.drink_id as drinkId, i.id, i.name, i.category, i.in_stock as inStock
-    FROM drink_ingredients di
-    JOIN ingredients i ON i.id = di.ingredient_id
-    WHERE di.drink_id = ?
-    ORDER BY i.name COLLATE NOCASE
-  `);
-
-  const payload = drinks.map((drink) => {
-    const ingredients = ingredientStmt.all(drink.id).map((row) => ({
-      id: row.id,
-      name: row.name,
-      category: row.category,
-      inStock: !!row.inStock
-    }));
-    return {
-      id: drink.id,
-      name: drink.name,
-      instructions: drink.instructions,
-      ingredients
-    };
-  });
+  const drinks = db.prepare('SELECT id FROM drinks ORDER BY name COLLATE NOCASE').all();
+  const payload = drinks
+    .map((row) => getDrinkWithAvailability(row.id))
+    .filter((drink) => drink !== null);
   res.json(payload);
 });
 
-app.post('/api/drinks', (req, res) => {
-  const { name, instructions, ingredients } = req.body || {};
-  if (!name || typeof name !== 'string') {
-    return res.status(400).json({ message: 'Drink name is required.' });
-  }
-  if (!instructions || typeof instructions !== 'string') {
-    return res.status(400).json({ message: 'Instructions are required.' });
-  }
-  if (!Array.isArray(ingredients) || ingredients.length === 0) {
-    return res.status(400).json({ message: 'At least one ingredient is required.' });
+const insertDrinkStatement = db.prepare('INSERT INTO drinks (name, instructions) VALUES (?, ?)');
+const linkIngredientStatement = db.prepare('INSERT INTO drink_ingredients (drink_id, ingredient_id) VALUES (?, ?)');
+
+app.post('/api/drinks', (req, res, next) => {
+  const validation = validateDrinkPayload(req.body);
+  if (!validation.ok) {
+    return res.status(400).json({ message: validation.errors[0], errors: validation.errors });
   }
 
-  const cleanName = normaliseIngredientName(name);
-  const cleanInstructions = instructions.trim();
-  const cleanIngredients = ingredients
-    .map((item) => (typeof item === 'string' ? normaliseIngredientName(item) : null))
-    .filter((item) => item);
+  const { name, instructions, ingredients } = validation.data;
 
-  if (!cleanIngredients.length) {
-    return res.status(400).json({ message: 'Ingredients are invalid.' });
-  }
-
-  const insertDrink = db.prepare('INSERT INTO drinks (name, instructions) VALUES (?, ?)');
-  let drinkId;
   try {
-    const result = insertDrink.run(cleanName, cleanInstructions);
-    drinkId = result.lastInsertRowid;
+    const createDrink = db.transaction(() => {
+      const result = insertDrinkStatement.run(name, instructions);
+      const drinkId = result.lastInsertRowid;
+
+      for (const ingredientName of ingredients) {
+        const ingredient = ensureIngredient(ingredientName);
+        linkIngredientStatement.run(drinkId, ingredient.id);
+      }
+
+      return drinkId;
+    });
+
+    const drinkId = createDrink();
+    const payload = getDrinkWithAvailability(drinkId);
+    res.status(201).json(payload);
   } catch (error) {
     if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(409).json({ message: 'A drink with that name already exists.' });
     }
-    throw error;
+    next(error);
   }
-
-  const getIngredient = db.prepare('SELECT id FROM ingredients WHERE LOWER(name) = LOWER(?)');
-  const insertIngredient = db.prepare('INSERT INTO ingredients (name) VALUES (?)');
-  const linkIngredient = db.prepare('INSERT INTO drink_ingredients (drink_id, ingredient_id) VALUES (?, ?)');
-
-  const transaction = db.transaction(() => {
-    for (const ingredientName of cleanIngredients) {
-      let ingredient = getIngredient.get(ingredientName);
-      if (!ingredient) {
-        const result = insertIngredient.run(ingredientName);
-        ingredient = { id: result.lastInsertRowid };
-      }
-      linkIngredient.run(drinkId, ingredient.id);
-    }
-  });
-
-  try {
-    transaction();
-  } catch (error) {
-    db.prepare('DELETE FROM drinks WHERE id = ?').run(drinkId);
-    throw error;
-  }
-
-  const drink = db
-    .prepare('SELECT id, name, instructions FROM drinks WHERE id = ?')
-    .get(drinkId);
-  const ingredientsForDrink = db.prepare(`
-      SELECT i.id, i.name, i.category, i.in_stock as inStock
-      FROM drink_ingredients di
-      JOIN ingredients i ON i.id = di.ingredient_id
-      WHERE di.drink_id = ?
-      ORDER BY i.name COLLATE NOCASE
-    `);
-  const payload = {
-    id: drink.id,
-    name: drink.name,
-    instructions: drink.instructions,
-    ingredients: ingredientsForDrink.all(drink.id).map((row) => ({
-      id: row.id,
-      name: row.name,
-      category: row.category,
-      inStock: !!row.inStock
-    }))
-  };
-
-  res.status(201).json(payload);
 });
 
 app.use((err, req, res, next) => {
