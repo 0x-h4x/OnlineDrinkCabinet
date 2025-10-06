@@ -5,7 +5,8 @@ const fs = require('fs');
 const Database = require('better-sqlite3');
 
 const app = express();
-const PORT = process.env.PORT || 1933;
+const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 const dataDir = path.join(__dirname, 'data');
 const dbPath = path.join(dataDir, 'cabinet.db');
 
@@ -16,7 +17,7 @@ db.pragma('foreign_keys = ON');
 
 const { baseDrinks, baseIngredients } = require('./seed/defaultData');
 
-const SEED_VERSION = 1;
+const SEED_VERSION = 2;
 
 
 function migrate() {
@@ -314,7 +315,7 @@ app.post('/api/drinks', (req, res, next) => {
     const payload = getDrinkWithAvailability(drinkId);
     res.status(201).json(payload);
   } catch (error) {
-    if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+    if (error && error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(409).json({ message: 'A drink with that name already exists.' });
     }
     next(error);
@@ -326,6 +327,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Unexpected server error.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Drink cabinet API listening on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Drink cabinet API listening on http://${HOST}:${PORT}`);
 });
