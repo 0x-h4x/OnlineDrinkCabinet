@@ -12,23 +12,42 @@ const baseIngredients = [
   { name: 'Lime juice', category: 'Juice' },
   { name: 'Lemon juice', category: 'Juice' },
   { name: 'Grapefruit juice', category: 'Juice' },
+  { name: 'Tomato juice', category: 'Juice' },
   { name: 'Simple syrup', category: 'Syrup' },
   { name: 'Grenadine', category: 'Syrup' },
   { name: 'Passion fruit syrup', category: 'Syrup' },
   { name: 'Orgeat', category: 'Syrup' },
+  { name: 'Elderflower syrup', category: 'Syrup' },
+  { name: 'Vanilla syrup', category: 'Syrup' },
   { name: 'Cola', category: 'Soda' },
   { name: 'Ginger beer', category: 'Soda' },
   { name: 'Tonic water', category: 'Soda' },
   { name: 'Sparkling water', category: 'Soda' },
+  { name: 'Soda water', category: 'Soda' },
   { name: 'Prosecco', category: 'Wine' },
-  { name: 'Bitters', category: 'Aromatic' },
-  { name: 'Elderflower syrup', category: 'Syrup' },
-  { name: 'Vanilla syrup', category: 'Syrup' },
+  { name: 'Dry vermouth', category: 'Fortified Wine' },
+  { name: 'Sweet vermouth', category: 'Fortified Wine' },
+  { name: 'Bourbon', category: 'Base Spirit' },
+  { name: 'Rye whiskey', category: 'Base Spirit' },
+  { name: 'Dark rum', category: 'Base Spirit' },
+  { name: 'Cachaça', category: 'Base Spirit' },
+  { name: 'Aperol', category: 'Liqueur' },
+  { name: 'Coffee liqueur', category: 'Liqueur' },
   { name: 'Coconut cream', category: 'Mixer' },
   { name: 'Cucumber', category: 'Garnish' },
   { name: 'Mint leaves', category: 'Herb' },
+  { name: 'Mint sprig', category: 'Garnish' },
   { name: 'Maraschino cherries', category: 'Garnish' },
-  { name: 'Edible flowers', category: 'Garnish' }
+  { name: 'Edible flowers', category: 'Garnish' },
+  { name: 'Sugar cube', category: 'Sweetener' },
+  { name: 'Brown sugar', category: 'Sweetener' },
+  { name: 'Angostura bitters', category: 'Aromatic' },
+  { name: 'Bitters', category: 'Aromatic' },
+  { name: 'Espresso', category: 'Coffee' },
+  { name: 'Tabasco', category: 'Condiment' },
+  { name: 'Worcestershire sauce', category: 'Condiment' },
+  { name: 'Salt', category: 'Seasoning' },
+  { name: 'Pepper', category: 'Seasoning' }
 ];
 
 const baseDrinks = [
@@ -209,6 +228,96 @@ const baseDrinks = [
     name: 'Mimosa',
     ingredients: ['Orange juice', 'Prosecco'],
     instructions: 'Combine equal parts (60 ml each) orange juice and prosecco in flute. No ice.'
+  },
+  {
+    name: 'Martini',
+    ingredients: ['Gin', 'Dry vermouth'],
+    instructions:
+      'Stir 60 ml gin and 10 ml dry vermouth with ice. Strain into chilled martini glass. Garnish with olive or lemon twist.'
+  },
+  {
+    name: 'Negroni',
+    ingredients: ['Gin', 'Sweet vermouth', 'Bitters'],
+    instructions:
+      'Stir 30 ml gin, 30 ml sweet vermouth, and 30 ml bitters with ice. Strain over fresh ice. Garnish with orange peel.'
+  },
+  {
+    name: 'Old Fashioned',
+    ingredients: ['Bourbon', 'Sugar cube', 'Angostura bitters'],
+    instructions:
+      'Muddle sugar cube with 2 dashes Angostura bitters and splash of water. Add 60 ml bourbon, ice, and stir. Garnish with orange peel.'
+  },
+  {
+    name: 'Mojito',
+    ingredients: ['White rum', 'Lime juice', 'Mint leaves', 'Brown sugar', 'Soda water'],
+    instructions:
+      'Muddle 2 tsp brown sugar, lime juice, and mint leaves. Add 45 ml rum and ice. Top with soda water. Garnish mint sprig.'
+  },
+  {
+    name: 'Daiquiri',
+    ingredients: ['White rum', 'Lime juice', 'Simple syrup'],
+    instructions:
+      'Shake 60 ml rum, 25 ml lime juice, 15 ml simple syrup with ice. Strain into coupe.'
+  },
+  {
+    name: 'Manhattan',
+    ingredients: ['Rye whiskey', 'Sweet vermouth', 'Angostura bitters'],
+    instructions:
+      'Stir 50 ml rye whiskey, 20 ml sweet vermouth, 2 dashes bitters with ice. Strain into coupe. Garnish cherry.'
+  },
+  {
+    name: 'Cosmopolitan',
+    ingredients: ['Vodka', 'Triple sec', 'Lime juice', 'Cranberry juice'],
+    instructions:
+      'Shake 45 ml vodka, 15 ml triple sec, 15 ml lime juice, 30 ml cranberry juice. Strain into martini glass.'
+  },
+  {
+    name: 'Whiskey Sour',
+    ingredients: ['Bourbon', 'Lemon juice', 'Simple syrup'],
+    instructions:
+      'Shake 45 ml bourbon, 25 ml lemon juice, 15 ml simple syrup with ice. Strain into rocks glass.'
+  },
+  {
+    name: 'Espresso Martini',
+    ingredients: ['Vodka', 'Coffee liqueur', 'Espresso', 'Simple syrup'],
+    instructions:
+      'Shake 45 ml vodka, 30 ml coffee liqueur, 30 ml espresso, 10 ml simple syrup with ice. Strain into martini glass.'
+  },
+  {
+    name: 'Aperol Spritz',
+    ingredients: ['Aperol', 'Prosecco', 'Sparkling water'],
+    instructions:
+      'Build 60 ml Aperol, 90 ml prosecco, 30 ml sparkling water in wine glass with ice. Garnish orange slice.'
+  },
+  {
+    name: 'Caipirinha',
+    ingredients: ['Cachaça', 'Lime juice', 'Brown sugar'],
+    instructions:
+      'Muddle 2 tsp brown sugar with half lime cut in wedges. Add 60 ml cachaça and ice. Stir.'
+  },
+  {
+    name: 'Bloody Mary',
+    ingredients: ['Vodka', 'Tomato juice', 'Lemon juice', 'Worcestershire sauce', 'Tabasco', 'Salt', 'Pepper'],
+    instructions:
+      'Stir 45 ml vodka, 90 ml tomato juice, 15 ml lemon juice, 2 dashes Worcestershire, 2 dashes Tabasco, pinch salt and pepper. Pour over ice, stir.'
+  },
+  {
+    name: 'Tom Collins',
+    ingredients: ['Gin', 'Lemon juice', 'Simple syrup', 'Soda water'],
+    instructions:
+      'Shake 45 ml gin, 25 ml lemon, 15 ml simple syrup. Strain into glass with ice. Top with soda water.'
+  },
+  {
+    name: 'Margarita Frozen',
+    ingredients: ['Tequila (silver)', 'Triple sec', 'Lime juice', 'Simple syrup'],
+    instructions:
+      'Blend 45 ml tequila, 15 ml triple sec, 20 ml lime juice, 10 ml simple syrup with ice. Pour into salt-rimmed glass.'
+  },
+  {
+    name: 'Mai Tai Classic',
+    ingredients: ['White rum', 'Dark rum', 'Lime juice', 'Orgeat', 'Triple sec'],
+    instructions:
+      'Shake 30 ml white rum, 30 ml dark rum, 20 ml lime, 15 ml orgeat, 10 ml triple sec. Strain over crushed ice. Garnish mint sprig.'
   }
 ];
 
