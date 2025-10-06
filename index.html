@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Drink Cabinet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Online Drink Cabinet</h1>
+    <p class="tagline">Keep track of your bar cart and explore cocktails you can make right now.</p>
+  </header>
+
+  <main class="app-layout">
+    <section class="card" aria-labelledby="fridge-heading">
+      <div class="section-header">
+        <h2 id="fridge-heading">Fridge &amp; Pantry</h2>
+        <p>Manage the ingredients you currently have in stock.</p>
+      </div>
+
+      <form id="add-ingredient-form" class="form-grid" autocomplete="off">
+        <label class="form-control">
+          <span>Ingredient name</span>
+          <input type="text" id="ingredient-input" list="ingredient-catalog" placeholder="e.g. Gin" required />
+        </label>
+        <label class="form-control">
+          <span>Category <small>(optional)</small></span>
+          <input type="text" id="ingredient-category" placeholder="e.g. Base Spirit" />
+        </label>
+        <button type="submit" class="primary-btn">Add ingredient</button>
+      </form>
+
+      <datalist id="ingredient-catalog"></datalist>
+
+      <div class="inventory-controls">
+        <div class="inventory-count" aria-live="polite"></div>
+        <button type="button" id="reset-inventory" class="link-btn">Clear all</button>
+      </div>
+
+      <ul id="inventory-list" class="pill-list" aria-live="polite"></ul>
+    </section>
+
+    <section class="card" aria-labelledby="drinks-heading">
+      <div class="section-header">
+        <h2 id="drinks-heading">Cocktail Library</h2>
+        <p>Browse existing drinks or add your own favourites.</p>
+      </div>
+
+      <form id="add-drink-form" class="stacked-form" autocomplete="off">
+        <div class="form-row">
+          <label class="form-control">
+            <span>Drink name</span>
+            <input type="text" id="drink-name" placeholder="e.g. French 75" required />
+          </label>
+          <label class="form-control">
+            <span>Ingredients</span>
+            <div class="ingredient-selector">
+              <ul
+                id="selected-ingredients"
+                class="selected-ingredients"
+                aria-live="polite"
+                aria-label="Selected ingredients"
+              ></ul>
+              <div class="selector-controls">
+                <input
+                  type="text"
+                  id="drink-ingredient-search"
+                  list="drink-ingredient-catalog"
+                  placeholder="Search ingredients"
+                  aria-describedby="drink-ingredient-help"
+                />
+                <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
+              </div>
+            </div>
+            <p class="field-help" id="drink-ingredient-help">
+              Search your fridge for existing ingredients or type a new one and press Add.
+            </p>
+            <input type="hidden" id="drink-ingredients" />
+          </label>
+        </div>
+        <datalist id="drink-ingredient-catalog"></datalist>
+        <label class="form-control">
+          <span>Recipe / Instructions</span>
+          <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Add drink</button>
+      </form>
+
+      <div class="drinks-filter" role="group" aria-label="Filter drinks">
+        <button type="button" data-filter="all" class="chip chip-active">All drinks</button>
+        <button type="button" data-filter="ready" class="chip">Ready to mix</button>
+        <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
+      </div>
+
+      <ul id="drinks-list" class="drinks-list" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <template id="drink-template">
+    <li class="drink-card">
+      <header class="drink-header">
+        <div>
+          <h3 class="drink-title"></h3>
+          <p class="drink-status"></p>
+        </div>
+        <span class="drink-badge" aria-hidden="true"></span>
+      </header>
+      <details class="drink-details">
+        <summary>
+          <span>Ingredients</span>
+        </summary>
+        <ul class="ingredient-list"></ul>
+        <p class="missing-ingredients"></p>
+        <h4>Method</h4>
+        <p class="drink-recipe"></p>
+      </details>
+    </li>
+  </template>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
