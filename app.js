@@ -1,7 +1,8 @@
 const state = {
   ingredients: [],
   drinks: [],
-  filter: 'all'
+  filter: 'all',
+  drinkFormIngredients: []
 };
 
 const elements = {
@@ -14,6 +15,10 @@ const elements = {
   ingredientCatalog: document.getElementById('ingredient-catalog'),
   drinkForm: document.getElementById('add-drink-form'),
   drinkName: document.getElementById('drink-name'),
+  drinkIngredientSearch: document.getElementById('drink-ingredient-search'),
+  drinkIngredientCatalog: document.getElementById('drink-ingredient-catalog'),
+  selectedDrinkIngredients: document.getElementById('selected-ingredients'),
+  addIngredientToDrink: document.getElementById('add-ingredient-to-drink'),
   drinkIngredients: document.getElementById('drink-ingredients'),
   drinkRecipe: document.getElementById('drink-recipe'),
   drinksList: document.getElementById('drinks-list'),
@@ -48,10 +53,16 @@ async function loadDrinks() {
 
 function updateIngredientCatalog() {
   elements.ingredientCatalog.innerHTML = '';
-  for (const ingredient of state.ingredients) {
+  elements.drinkIngredientCatalog.innerHTML = '';
+  const sorted = [...state.ingredients].sort((a, b) => a.name.localeCompare(b.name));
+  for (const ingredient of sorted) {
     const option = document.createElement('option');
     option.value = ingredient.name;
     elements.ingredientCatalog.append(option);
+
+    const drinkOption = document.createElement('option');
+    drinkOption.value = ingredient.name;
+    elements.drinkIngredientCatalog.append(drinkOption);
   }
 }
 
@@ -104,6 +115,93 @@ function renderIngredients() {
     });
     elements.ingredientList.append(item);
   }
+}
+
+function normaliseIngredientInput(name) {
+  return name.trim().replace(/\s+/g, ' ');
+}
+
+function resolveIngredientName(value) {
+  const cleanValue = normaliseIngredientInput(value);
+  if (!cleanValue) return '';
+  const existing = state.ingredients.find((item) => item.name.toLowerCase() === cleanValue.toLowerCase());
+  return existing ? existing.name : cleanValue;
+}
+
+function renderSelectedDrinkIngredients() {
+  const list = elements.selectedDrinkIngredients;
+  list.innerHTML = '';
+
+  if (state.drinkFormIngredients.length === 0) {
+    const empty = document.createElement('li');
+    empty.className = 'selector-empty';
+    empty.textContent = 'No ingredients yet. Search and add from the field below.';
+    list.append(empty);
+    return;
+  }
+
+  state.drinkFormIngredients.forEach((name, index) => {
+    const item = document.createElement('li');
+    item.className = 'selector-pill';
+
+    const label = document.createElement('span');
+    label.textContent = name;
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'remove-pill';
+    remove.dataset.index = index;
+    remove.setAttribute('aria-label', `Remove ${name}`);
+    remove.textContent = '×';
+
+    item.append(label, remove);
+    list.append(item);
+  });
+}
+
+function updateDrinkFormState() {
+  elements.drinkIngredients.value = state.drinkFormIngredients.join(', ');
+  if (state.drinkFormIngredients.length > 0) {
+    elements.drinkIngredientSearch.setCustomValidity('');
+  }
+}
+
+function addDrinkIngredient(rawValue) {
+  const resolvedName = resolveIngredientName(rawValue || '');
+  if (!resolvedName) {
+    return;
+  }
+
+  const exists = state.drinkFormIngredients.some(
+    (item) => item.toLowerCase() === resolvedName.toLowerCase()
+  );
+  if (exists) {
+    elements.drinkIngredientSearch.value = '';
+    return;
+  }
+
+  state.drinkFormIngredients.push(resolvedName);
+  renderSelectedDrinkIngredients();
+  updateDrinkFormState();
+  elements.drinkIngredientSearch.value = '';
+  elements.drinkIngredientSearch.focus();
+}
+
+function removeDrinkIngredient(index) {
+  if (index < 0 || index >= state.drinkFormIngredients.length) {
+    return;
+  }
+  state.drinkFormIngredients.splice(index, 1);
+  renderSelectedDrinkIngredients();
+  updateDrinkFormState();
+}
+
+function resetDrinkForm() {
+  state.drinkFormIngredients = [];
+  elements.drinkForm.reset();
+  elements.drinkIngredientSearch.value = '';
+  renderSelectedDrinkIngredients();
+  updateDrinkFormState();
 }
 
 function summariseDrink(drink) {
@@ -248,14 +346,16 @@ async function handleResetInventory() {
 
 async function handleDrinkSubmit(event) {
   event.preventDefault();
+  elements.drinkIngredientSearch.setCustomValidity('');
   const name = elements.drinkName.value.trim();
   const instructions = elements.drinkRecipe.value.trim();
-  const ingredientsInput = elements.drinkIngredients.value
-    .split(',')
-    .map((value) => value.trim())
-    .filter(Boolean);
+  const ingredientsInput = state.drinkFormIngredients.map((value) => value.trim()).filter(Boolean);
 
   if (!name || !instructions || ingredientsInput.length === 0) {
+    if (ingredientsInput.length === 0) {
+      elements.drinkIngredientSearch.setCustomValidity('Add at least one ingredient to the drink.');
+      elements.drinkIngredientSearch.reportValidity();
+    }
     return;
   }
 
@@ -265,7 +365,7 @@ async function handleDrinkSubmit(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, instructions, ingredients: ingredientsInput })
     });
-    elements.drinkForm.reset();
+    resetDrinkForm();
     await Promise.all([loadDrinks(), loadIngredients()]);
   } catch (error) {
     console.error(error);
@@ -281,15 +381,46 @@ function handleFilterClick(event) {
   renderDrinks();
 }
 
+function handleDrinkIngredientSelection(event) {
+  addDrinkIngredient(event.target.value);
+}
+
+function handleDrinkIngredientKeydown(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    addDrinkIngredient(event.target.value);
+  } else if (event.key === 'Backspace' && event.target.value === '') {
+    removeDrinkIngredient(state.drinkFormIngredients.length - 1);
+  }
+}
+
+function handleSelectedIngredientClick(event) {
+  const button = event.target.closest('button[data-index]');
+  if (!button) return;
+  const index = Number.parseInt(button.dataset.index, 10);
+  if (Number.isNaN(index)) return;
+  removeDrinkIngredient(index);
+}
+
+function handleAddIngredientButton() {
+  addDrinkIngredient(elements.drinkIngredientSearch.value);
+}
+
 function setupEventListeners() {
   elements.ingredientForm.addEventListener('submit', handleIngredientSubmit);
   elements.resetInventory.addEventListener('click', handleResetInventory);
   elements.drinkForm.addEventListener('submit', handleDrinkSubmit);
   document.querySelector('.drinks-filter').addEventListener('click', handleFilterClick);
+  elements.drinkIngredientSearch.addEventListener('change', handleDrinkIngredientSelection);
+  elements.drinkIngredientSearch.addEventListener('keydown', handleDrinkIngredientKeydown);
+  elements.selectedDrinkIngredients.addEventListener('click', handleSelectedIngredientClick);
+  elements.addIngredientToDrink.addEventListener('click', handleAddIngredientButton);
 }
 
 async function bootstrap() {
   setupEventListeners();
+  renderSelectedDrinkIngredients();
+  updateDrinkFormState();
   try {
     await Promise.all([loadIngredients(), loadDrinks()]);
   } catch (error) {

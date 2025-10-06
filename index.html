@@ -57,10 +57,32 @@
             <input type="text" id="drink-name" placeholder="e.g. French 75" required />
           </label>
           <label class="form-control">
-            <span>Ingredients <small>(separate with commas)</small></span>
-            <input type="text" id="drink-ingredients" placeholder="Gin, Lemon juice, Simple syrup" required />
+            <span>Ingredients</span>
+            <div class="ingredient-selector">
+              <ul
+                id="selected-ingredients"
+                class="selected-ingredients"
+                aria-live="polite"
+                aria-label="Selected ingredients"
+              ></ul>
+              <div class="selector-controls">
+                <input
+                  type="text"
+                  id="drink-ingredient-search"
+                  list="drink-ingredient-catalog"
+                  placeholder="Search ingredients"
+                  aria-describedby="drink-ingredient-help"
+                />
+                <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
+              </div>
+            </div>
+            <p class="field-help" id="drink-ingredient-help">
+              Search your fridge for existing ingredients or type a new one and press Add.
+            </p>
+            <input type="hidden" id="drink-ingredients" />
           </label>
         </div>
+        <datalist id="drink-ingredient-catalog"></datalist>
         <label class="form-control">
           <span>Recipe / Instructions</span>
           <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>

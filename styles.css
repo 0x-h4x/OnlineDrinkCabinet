@@ -98,6 +98,13 @@ body {
   color: #3c2f24;
 }
 
+.field-help {
+  margin: 0;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #7c6a58;
+}
+
 input,
 textarea,
 button {
@@ -111,6 +118,87 @@ textarea {
   border: 1px solid #d8c6b5;
   background: rgba(255, 255, 255, 0.92);
   transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ingredient-selector {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.selected-ingredients {
+  list-style: none;
+  padding: 0.35rem;
+  margin: 0;
+  min-height: 48px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border: 1px dashed rgba(216, 198, 181, 0.9);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.selector-empty {
+  color: #9f8774;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.selector-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+#drink-ingredient-search {
+  flex: 1;
+}
+
+.secondary-btn {
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #e7c9aa;
+  background: rgba(255, 255, 255, 0.95);
+  color: #9a4d1e;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #fef3c7;
+  color: #a16207;
+  box-shadow: 0 6px 14px rgba(209, 134, 32, 0.2);
+}
+
+.secondary-btn:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  outline-offset: 2px;
+}
+
+.selector-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--pill-bg);
+  color: var(--pill-text);
+  font-weight: 500;
+}
+
+.selector-pill .remove-pill {
+  border: none;
+  background: none;
+  color: #9a4d1e;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.selector-pill .remove-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  border-radius: 999px;
 }
 
 input:focus,
