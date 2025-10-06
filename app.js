@@ -40,7 +40,10 @@ async function fetchJSON(url, options) {
 
 async function loadIngredients() {
   const data = await fetchJSON('/api/ingredients');
-  state.ingredients = data;
+  state.ingredients = data.map((item) => ({
+    ...item,
+    inStock: !!item.inStock
+  }));
   syncDrinkAvailability();
   renderIngredients();
   updateIngredientCatalog();
@@ -108,6 +111,7 @@ function renderIngredientPill(ingredient) {
   item.setAttribute('role', 'button');
   item.tabIndex = 0;
   item.title = ingredient.inStock ? 'Mark as out of stock' : 'Mark as in stock';
+  item.setAttribute('aria-pressed', ingredient.inStock ? 'true' : 'false');
   item.textContent = ingredient.name;
   item.addEventListener('click', () => toggleIngredient(ingredient.id, !ingredient.inStock));
   item.addEventListener('keydown', (event) => {
@@ -134,7 +138,7 @@ function renderIngredients() {
 
   elements.ingredientList.innerHTML = '';
   if (state.ingredients.length === 0) {
-    const empty = document.createElement('li');
+    const empty = document.createElement('div');
     empty.className = 'empty-state';
     empty.textContent = 'Add items to your fridge to start tracking availability.';
     elements.ingredientList.append(empty);
@@ -142,9 +146,43 @@ function renderIngredients() {
   }
 
   const sorted = [...state.ingredients].sort((a, b) => a.name.localeCompare(b.name));
+  const groups = new Map();
+
   for (const ingredient of sorted) {
-    elements.ingredientList.append(renderIngredientPill(ingredient));
+    const label = ingredient.category?.trim() || 'Other';
+    if (!groups.has(label)) {
+      groups.set(label, []);
+    }
+    groups.get(label).push(ingredient);
   }
+
+  const groupNames = Array.from(groups.keys()).sort((a, b) => {
+    if (a === 'Other') return 1;
+    if (b === 'Other') return -1;
+    return a.localeCompare(b);
+  });
+
+  const fragment = document.createDocumentFragment();
+  for (const name of groupNames) {
+    const groupContainer = document.createElement('div');
+    groupContainer.className = 'ingredient-group';
+
+    const title = document.createElement('h3');
+    title.className = 'ingredient-group-title';
+    title.textContent = name;
+    groupContainer.append(title);
+
+    const list = document.createElement('ul');
+    list.className = 'pill-list ingredient-group-list';
+    for (const ingredient of groups.get(name)) {
+      list.append(renderIngredientPill(ingredient));
+    }
+
+    groupContainer.append(list);
+    fragment.append(groupContainer);
+  }
+
+  elements.ingredientList.append(fragment);
 }
 
 function normaliseIngredientInput(name) {

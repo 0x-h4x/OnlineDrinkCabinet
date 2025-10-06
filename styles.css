@@ -282,6 +282,8 @@ textarea:focus {
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .pill button {
@@ -290,6 +292,44 @@ textarea:focus {
   color: #9a4d1e;
   font-weight: 600;
   cursor: pointer;
+}
+
+.pill:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  outline-offset: 2px;
+}
+
+.pill-active {
+  background: #dcfce7;
+  color: #166534;
+  box-shadow: 0 6px 16px rgba(22, 101, 52, 0.18);
+}
+
+.pill-active:hover {
+  background: #bbf7d0;
+}
+
+.ingredient-groups {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.ingredient-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ingredient-group-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8c6a49;
+}
+
+.ingredient-group-list {
+  margin-top: 0.25rem;
 }
 
 .drink-toolbar {
@@ -329,11 +369,6 @@ textarea:focus {
   gap: 0.5rem;
   justify-content: flex-end;
   margin: 0;
-.drinks-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
 }
 
 .chip {
