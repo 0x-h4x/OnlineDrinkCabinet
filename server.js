@@ -5,7 +5,8 @@ const fs = require('fs');
 const Database = require('better-sqlite3');
 
 const app = express();
-const PORT = process.env.PORT || 1933;
+const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 const dataDir = path.join(__dirname, 'data');
 const dbPath = path.join(dataDir, 'cabinet.db');
 
@@ -326,6 +327,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Unexpected server error.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Drink cabinet API listening on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Drink cabinet API listening on http://${HOST}:${PORT}`);
 });
