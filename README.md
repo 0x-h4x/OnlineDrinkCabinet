@@ -35,17 +35,6 @@ The first start seeds the SQLite database (`data/cabinet.db`) with a base catalo
 
 To iterate faster while developing, you can run the server with hot reload using `npm run dev` (requires `nodemon`, installed as a dev dependency).
 
-## Hosting on GitHub Pages
-
-GitHub Pages only serves static assets, so the full stack version of this project (which relies on the Express/SQLite API) cannot run there by itself. You can, however, host the front-end files on Pages and point them at a separately hosted instance of the API.
-
-1. Deploy the API to a platform that supports long-running Node services (for example [Render](https://render.com/), [Railway](https://railway.app/), or [Fly.io](https://fly.io/)). Use `npm start` as the entry point and make sure the service listens on the port provided by the host instead of the hard-coded `1933` when running in production.
-2. Once the backend is deployed, note its public base URL (e.g. `https://your-app.onrender.com`). Update `app.js` to use that URL when building `fetch` requests instead of the relative `/api/...` paths, or inject it via an environment-specific configuration.
-3. Build a static bundle consisting of `index.html`, `styles.css`, `app.js`, and any assets. Commit them to a `gh-pages` branch and enable GitHub Pages in the repository settings, selecting that branch as the source.
-4. Visit the GitHub Pages site. The client will load from GitHub's CDN and communicate with your hosted API.
-
-If you prefer a single hosting target, consider deploying the entire Node app to a service that supports both static files and Node processes; GitHub Pages alone is not sufficient because it cannot run the Express server or host the SQLite database.
-
 ## Function overview
 
 ### Server (`server.js`)
