@@ -6,7 +6,7 @@ A cocktail recipe book backed by SQLite that helps you manage your home bar inve
 
 - **Fridge & Pantry module** – add ingredients, tag them by category, and flip them in or out of stock. Everything is stored in a SQLite database so your inventory persists between sessions.
 - **Cocktail library** – browse a curated starter collection of spritzes, highballs, and sours. Every recipe checks against your fridge to highlight what is ready to shake and what still needs a shopping trip.
-- **Custom creations** – add new drinks with a name, comma-separated ingredient list, and preparation instructions. Ingredients are automatically linked in the database so availability stays in sync.
+- **Custom creations** – add new drinks with a name, searchable ingredient selector (with inline creation), and preparation instructions. Ingredients are automatically linked in the database so availability stays in sync.
 - **Server-side API** – the front end fetches data from a tiny Express API, which you can extend or connect to other clients if needed.
 
 ## Requirements
@@ -40,8 +40,8 @@ To iterate faster while developing, you can run the server with hot reload using
 ### Server (`server.js`)
 
 - `migrate()` – ensures the SQLite schema for ingredients, drinks, and their join table exists before handling requests.
-- `seedIngredients()` – inserts the starter ingredient catalogue while keeping any user-supplied categories intact.
-- `seedDrinks()` – loads the base drink recipes, linking them to the corresponding ingredients.
+- `seedIngredients()` – inserts the starter ingredient catalogue while keeping any user-supplied categories intact (data lives in `seed/defaultData.js`).
+- `seedDrinks()` – loads the base drink recipes from `seed/defaultData.js`, linking them to the corresponding ingredients.
 - `normaliseIngredientName(name)` – trims and collapses whitespace so ingredient and drink names stay consistent.
 - Express route handlers – serve and mutate ingredient and drink data (`/api/ingredients`, `/api/drinks`) with validation and error handling.
 
