@@ -4,6 +4,7 @@ const state = {
   filter: 'all',
   searchTerm: '',
   drinkFormIngredients: []
+  filter: 'all'
 };
 
 const elements = {
@@ -361,12 +362,63 @@ function renderDrinks() {
           ? 'Nothing is fully stocked yet. Add more ingredients to unlock drinks.'
           : 'Everything here is ready to shake. Switch filters to explore more.';
     }
+    empty.textContent =
+      state.filter === 'ready'
+        ? 'Nothing is fully stocked yet. Add more ingredients to unlock drinks.'
+        : 'Everything here is ready to shake. Switch filters to explore more.';
     elements.drinksList.append(empty);
     return;
   }
 
   for (const drink of drinksToShow) {
     elements.drinksList.append(renderDrinkCard(drink));
+  const template = elements.drinkTemplate.content;
+  for (const drink of drinksToShow) {
+    const summary = summariseDrink(drink);
+    const node = template.cloneNode(true);
+    const listItem = node.querySelector('.drink-card');
+    listItem.dataset.drinkId = drink.id;
+
+    node.querySelector('.drink-title').textContent = drink.name;
+    node.querySelector('.drink-recipe').textContent = drink.instructions;
+
+    const status = node.querySelector('.drink-status');
+    const badge = node.querySelector('.drink-badge');
+    if (summary.ready) {
+      status.textContent = 'Ready to mix';
+      badge.textContent = 'Ready';
+      badge.className = 'drink-badge badge-ready';
+    } else if (summary.missing.length === summary.total) {
+      status.textContent = 'Missing every ingredient';
+      badge.textContent = 'Out';
+      badge.className = 'drink-badge badge-missing';
+    } else {
+      status.textContent = `Missing ${summary.missing.length} of ${summary.total}`;
+      badge.textContent = `${summary.available}/${summary.total}`;
+      badge.className = 'drink-badge badge-partial';
+    }
+
+    const ingredientList = node.querySelector('.ingredient-list');
+    ingredientList.innerHTML = '';
+    for (const ingredient of drink.ingredients) {
+      const ingredientItem = document.createElement('li');
+      ingredientItem.textContent = ingredient.name;
+      if (ingredient.inStock) {
+        ingredientItem.classList.add('ingredient-ready');
+      } else {
+        ingredientItem.classList.add('ingredient-missing');
+      }
+      ingredientList.append(ingredientItem);
+    }
+
+    const missingText = node.querySelector('.missing-ingredients');
+    if (summary.missing.length > 0) {
+      missingText.textContent = `Missing: ${summary.missing.map((item) => item.name).join(', ')}`;
+    } else {
+      missingText.textContent = 'Everything you need is on hand.';
+    }
+
+    elements.drinksList.append(node);
   }
 }
 
@@ -426,6 +478,14 @@ async function handleDrinkSubmit(event) {
       elements.drinkIngredientSearch.setCustomValidity('Add at least one ingredient to the drink.');
       elements.drinkIngredientSearch.reportValidity();
     }
+  const name = elements.drinkName.value.trim();
+  const instructions = elements.drinkRecipe.value.trim();
+  const ingredientsInput = elements.drinkIngredients.value
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  if (!name || !instructions || ingredientsInput.length === 0) {
     return;
   }
 
@@ -436,6 +496,7 @@ async function handleDrinkSubmit(event) {
       body: JSON.stringify({ name, instructions, ingredients: ingredientsInput })
     });
     resetDrinkForm();
+    elements.drinkForm.reset();
     await Promise.all([loadDrinks(), loadIngredients()]);
   } catch (error) {
     console.error(error);
@@ -495,6 +556,7 @@ function setupEventListeners() {
   elements.drinkIngredientSearch.addEventListener('keydown', handleDrinkIngredientKeydown);
   elements.selectedDrinkIngredients.addEventListener('click', handleSelectedIngredientClick);
   elements.addIngredientToDrink.addEventListener('click', handleAddIngredientButton);
+  document.querySelector('.drinks-filter').addEventListener('click', handleFilterClick);
 }
 
 async function bootstrap() {

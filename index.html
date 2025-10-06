@@ -83,6 +83,10 @@
           </label>
         </div>
         <datalist id="drink-ingredient-catalog"></datalist>
+            <span>Ingredients <small>(separate with commas)</small></span>
+            <input type="text" id="drink-ingredients" placeholder="Gin, Lemon juice, Simple syrup" required />
+          </label>
+        </div>
         <label class="form-control">
           <span>Recipe / Instructions</span>
           <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
@@ -105,6 +109,10 @@
           <button type="button" data-filter="ready" class="chip">Ready to mix</button>
           <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
         </div>
+      <div class="drinks-filter" role="group" aria-label="Filter drinks">
+        <button type="button" data-filter="all" class="chip chip-active">All drinks</button>
+        <button type="button" data-filter="ready" class="chip">Ready to mix</button>
+        <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
       </div>
 
       <ul id="drinks-list" class="drinks-list" aria-live="polite"></ul>
