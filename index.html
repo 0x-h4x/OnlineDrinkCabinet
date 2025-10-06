@@ -50,18 +50,45 @@
         <p>Browse existing drinks or add your own favourites.</p>
       </div>
 
-      <div class="drink-actions">
-        <button
-          type="button"
-          id="open-add-drink"
-          class="primary-btn"
-          aria-haspopup="dialog"
-          aria-controls="add-drink-dialog"
-          aria-expanded="false"
-        >
-          Add drink
-        </button>
-      </div>
+      <form id="add-drink-form" class="stacked-form" autocomplete="off">
+        <div class="form-row">
+          <label class="form-control">
+            <span>Drink name</span>
+            <input type="text" id="drink-name" placeholder="e.g. French 75" required />
+          </label>
+          <label class="form-control">
+            <span>Ingredients</span>
+            <div class="ingredient-selector">
+              <ul
+                id="selected-ingredients"
+                class="selected-ingredients"
+                aria-live="polite"
+                aria-label="Selected ingredients"
+              ></ul>
+              <div class="selector-controls">
+                <input
+                  type="text"
+                  id="drink-ingredient-search"
+                  list="drink-ingredient-catalog"
+                  placeholder="Search ingredients"
+                  aria-describedby="drink-ingredient-help"
+                />
+                <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
+              </div>
+            </div>
+            <p class="field-help" id="drink-ingredient-help">
+              Search your fridge for existing ingredients or type a new one and press Add.
+            </p>
+            <input type="hidden" id="drink-ingredients" />
+          </label>
+        </div>
+        <datalist id="drink-ingredient-catalog"></datalist>
+        <label class="form-control">
+          <span>Recipe / Instructions</span>
+          <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Add drink</button>
+      </form>
 
       <div class="drink-toolbar">
         <label class="drink-search">
@@ -78,7 +105,7 @@
           <button type="button" data-filter="ready" class="chip">Ready to mix</button>
           <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
         </div>
-      </div>
+
       <ul id="drinks-list" class="drinks-list" aria-live="polite"></ul>
     </section>
   </main>

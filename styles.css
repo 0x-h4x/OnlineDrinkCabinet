@@ -346,12 +346,6 @@ textarea:focus {
   margin-top: 0.25rem;
 }
 
-.drink-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1.25rem;
-}
-
 .drink-toolbar {
   display: flex;
   flex-wrap: wrap;

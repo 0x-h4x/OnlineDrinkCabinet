@@ -507,7 +507,6 @@ async function handleDrinkSubmit(event) {
       body: JSON.stringify({ name, instructions, ingredients: ingredientsInput })
     });
     resetDrinkForm();
-    closeAddDrinkModal({ reset: false });
     await Promise.all([loadDrinks(), loadIngredients()]);
   } catch (error) {
     console.error(error);
@@ -555,68 +554,6 @@ function handleAddIngredientButton() {
   }
 }
 
-function openAddDrinkModal() {
-  const dialog = elements.drinkDialog;
-  if (!dialog) return;
-
-  if (typeof dialog.showModal === 'function') {
-    if (!dialog.open) {
-      dialog.showModal();
-    }
-  } else {
-    dialog.setAttribute('open', '');
-    dialog.classList.add('modal-fallback-open');
-    document.body?.classList.add('modal-open-fallback');
-  }
-
-  elements.openDrinkDialog?.setAttribute('aria-expanded', 'true');
-  document.body?.classList.add('modal-open');
-
-  window.requestAnimationFrame(() => {
-    elements.drinkName?.focus();
-  });
-}
-
-function closeAddDrinkModal({ reset = true, restoreFocus = true } = {}) {
-  const dialog = elements.drinkDialog;
-  if (!dialog) return;
-
-  dialog.classList.remove('modal-fallback-open');
-
-  if (typeof dialog.close === 'function') {
-    if (dialog.open) {
-      dialog.close();
-    }
-  } else if (dialog.hasAttribute('open')) {
-    dialog.removeAttribute('open');
-  }
-
-  if (reset) {
-    resetDrinkForm();
-  }
-
-  if (restoreFocus) {
-    elements.openDrinkDialog?.focus();
-  }
-
-  elements.openDrinkDialog?.setAttribute('aria-expanded', 'false');
-  document.body?.classList.remove('modal-open');
-  document.body?.classList.remove('modal-open-fallback');
-}
-
-function handleOpenDrinkDialog() {
-  openAddDrinkModal();
-}
-
-function handleCloseDrinkDialog() {
-  closeAddDrinkModal();
-}
-
-function handleDrinkDialogCancel(event) {
-  event.preventDefault();
-  closeAddDrinkModal();
-}
-
 function setupEventListeners() {
   elements.ingredientForm?.addEventListener('submit', handleIngredientSubmit);
   elements.resetInventory?.addEventListener('click', handleResetInventory);
@@ -627,10 +564,6 @@ function setupEventListeners() {
   elements.drinkIngredientSearch?.addEventListener('keydown', handleDrinkIngredientKeydown);
   elements.selectedDrinkIngredients?.addEventListener('click', handleSelectedIngredientClick);
   elements.addIngredientToDrink?.addEventListener('click', handleAddIngredientButton);
-  elements.openDrinkDialog?.addEventListener('click', handleOpenDrinkDialog);
-  elements.cancelDrinkDialog?.addEventListener('click', handleCloseDrinkDialog);
-  elements.closeDrinkDialog?.addEventListener('click', handleCloseDrinkDialog);
-  elements.drinkDialog?.addEventListener('cancel', handleDrinkDialogCancel);
 }
 
 async function bootstrap() {
