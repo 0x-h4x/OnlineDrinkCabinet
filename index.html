@@ -41,7 +41,7 @@
         <button type="button" id="reset-inventory" class="link-btn">Clear all</button>
       </div>
 
-      <ul id="inventory-list" class="pill-list" aria-live="polite"></ul>
+      <div id="inventory-list" class="ingredient-groups" aria-live="polite"></div>
     </section>
 
     <section class="card" aria-labelledby="drinks-heading">
@@ -105,11 +105,65 @@
           <button type="button" data-filter="ready" class="chip">Ready to mix</button>
           <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
         </div>
-      </div>
 
       <ul id="drinks-list" class="drinks-list" aria-live="polite"></ul>
     </section>
   </main>
+
+  <dialog
+    id="add-drink-dialog"
+    class="modal"
+    role="dialog"
+    aria-labelledby="add-drink-title"
+    aria-modal="true"
+  >
+    <form id="add-drink-form" class="stacked-form" autocomplete="off" method="dialog">
+      <header class="modal-header">
+        <h2 id="add-drink-title">Add a new drink</h2>
+        <button type="button" id="cancel-add-drink" class="icon-btn" aria-label="Close add drink form">×</button>
+      </header>
+      <div class="form-row">
+        <label class="form-control">
+          <span>Drink name</span>
+          <input type="text" id="drink-name" placeholder="e.g. French 75" required />
+        </label>
+        <label class="form-control">
+          <span>Ingredients</span>
+          <div class="ingredient-selector">
+            <ul
+              id="selected-ingredients"
+              class="selected-ingredients"
+              aria-live="polite"
+              aria-label="Selected ingredients"
+            ></ul>
+            <div class="selector-controls">
+              <input
+                type="text"
+                id="drink-ingredient-search"
+                list="drink-ingredient-catalog"
+                placeholder="Search ingredients"
+                aria-describedby="drink-ingredient-help"
+              />
+              <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
+            </div>
+          </div>
+          <p class="field-help" id="drink-ingredient-help">
+            Search your fridge for existing ingredients or type a new one and press Add.
+          </p>
+          <input type="hidden" id="drink-ingredients" />
+        </label>
+      </div>
+      <datalist id="drink-ingredient-catalog"></datalist>
+      <label class="form-control">
+        <span>Recipe / Instructions</span>
+        <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
+      </label>
+      <div class="modal-actions">
+        <button type="button" id="close-add-drink" class="secondary-btn">Cancel</button>
+        <button type="submit" class="primary-btn">Save drink</button>
+      </div>
+    </form>
+  </dialog>
 
   <template id="drink-template">
     <li class="drink-card">
