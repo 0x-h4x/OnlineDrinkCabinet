@@ -31,9 +31,7 @@ const elements = {
   cancelDrinkDialog: document.getElementById('cancel-add-drink'),
   closeDrinkDialog: document.getElementById('close-add-drink'),
   drinkDialog: document.getElementById('add-drink-dialog'),
-  themeToggle: document.getElementById('theme-toggle'),
-  drinksCard: document.querySelector('.drinks-card'),
-  fridgeCard: document.querySelector('.fridge-card')
+  themeToggle: document.getElementById('theme-toggle')
 };
 
 const THEME_STORAGE_KEY = 'odc-theme';
@@ -42,97 +40,6 @@ const prefersDarkScheme =
   typeof window !== 'undefined' && typeof window.matchMedia === 'function'
     ? window.matchMedia('(prefers-color-scheme: dark)')
     : null;
-
-const layoutSync = (() => {
-  const state = {
-    rafId: 0,
-    observer: null,
-    mediaQuery:
-      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-        ? window.matchMedia('(min-width: 900px)')
-        : null
-  };
-
-  const isTwoColumnLayout = () => {
-    if (state.mediaQuery && typeof state.mediaQuery.matches === 'boolean') {
-      return state.mediaQuery.matches;
-    }
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    return window.innerWidth >= 900;
-  };
-
-  const clearDrinksPanelHeight = () => {
-    if (!elements.drinksCard) return;
-    elements.drinksCard.style.removeProperty('height');
-    elements.drinksCard.style.removeProperty('max-height');
-  };
-
-  const updateDrinksPanelHeight = () => {
-    state.rafId = 0;
-    if (!elements.drinksCard || !elements.fridgeCard) return;
-
-    if (!isTwoColumnLayout()) {
-      clearDrinksPanelHeight();
-      return;
-    }
-
-    const fridgeRect = elements.fridgeCard.getBoundingClientRect();
-    if (!fridgeRect || fridgeRect.height <= 0) {
-      return;
-    }
-
-    const targetHeight = Math.round(fridgeRect.height);
-    elements.drinksCard.style.height = `${targetHeight}px`;
-    elements.drinksCard.style.maxHeight = `${targetHeight}px`;
-  };
-
-  const scheduleDrinksPanelHeightUpdate = () => {
-    if (state.rafId && typeof cancelAnimationFrame === 'function') {
-      cancelAnimationFrame(state.rafId);
-      state.rafId = 0;
-    }
-
-    if (typeof requestAnimationFrame === 'function') {
-      state.rafId = requestAnimationFrame(updateDrinksPanelHeight);
-    } else {
-      updateDrinksPanelHeight();
-    }
-  };
-
-  const initializeLayoutSync = () => {
-    if (!elements.drinksCard || !elements.fridgeCard) {
-      return;
-    }
-
-    if (typeof ResizeObserver === 'function') {
-      state.observer = new ResizeObserver(() => {
-        scheduleDrinksPanelHeightUpdate();
-      });
-      state.observer.observe(elements.fridgeCard);
-    }
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', scheduleDrinksPanelHeightUpdate);
-    }
-
-    if (state.mediaQuery) {
-      if (typeof state.mediaQuery.addEventListener === 'function') {
-        state.mediaQuery.addEventListener('change', scheduleDrinksPanelHeightUpdate);
-      } else if (typeof state.mediaQuery.addListener === 'function') {
-        state.mediaQuery.addListener(scheduleDrinksPanelHeightUpdate);
-      }
-    }
-
-    scheduleDrinksPanelHeightUpdate();
-  };
-
-  return {
-    initialize: initializeLayoutSync,
-    scheduleUpdate: scheduleDrinksPanelHeightUpdate
-  };
-})();
 
 async function fetchJSON(url, options) {
   const response = await fetch(url, options);
@@ -215,7 +122,6 @@ function initializeTheme() {
     }
   }
 }
-
 
 async function loadIngredients() {
   const data = await fetchJSON('/api/ingredients');
@@ -373,7 +279,7 @@ function renderIngredients() {
     empty.className = 'empty-state';
     empty.textContent = 'Add items to your fridge to start tracking availability.';
     elements.ingredientList.append(empty);
-    layoutSync.scheduleUpdate();
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
@@ -415,7 +321,7 @@ function renderIngredients() {
   }
 
   elements.ingredientList.append(fragment);
-  layoutSync.scheduleUpdate();
+  scheduleDrinksPanelHeightUpdate();
 }
 
 function normaliseIngredientInput(name) {
@@ -637,7 +543,7 @@ function renderDrinks() {
     empty.className = 'empty-state';
     empty.textContent = 'No drinks saved yet. Use the Add drink button to get started.';
     elements.drinksList.append(empty);
-    layoutSync.scheduleUpdate();
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
@@ -677,14 +583,14 @@ function renderDrinks() {
       empty.textContent = 'No drinks to display.';
     }
     elements.drinksList.append(empty);
-    layoutSync.scheduleUpdate();
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
   for (const drink of drinksToShow) {
     elements.drinksList.append(renderDrinkCard(drink));
   }
-  layoutSync.scheduleUpdate();
+  scheduleDrinksPanelHeightUpdate();
 }
 
 async function toggleIngredient(id, inStock) {
@@ -837,7 +743,7 @@ function setupEventListeners() {
 
 async function bootstrap() {
   setupEventListeners();
-  layoutSync.initialize();
+  initializeLayoutSync();
   renderSelectedDrinkIngredients();
   updateDrinkFormState();
   try {
