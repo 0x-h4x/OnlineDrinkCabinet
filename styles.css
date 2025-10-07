@@ -262,6 +262,58 @@ body.modal-open-fallback::after {
   backdrop-filter: blur(6px);
 }
 
+.drinks-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drinks-card .drinks-scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-right: 0.5rem;
+  margin-right: -0.5rem;
+}
+
+.drinks-card .drinks-scroll-area::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.drinks-card .drinks-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drinks-card .drinks-scroll-area::-webkit-scrollbar-thumb {
+  background: var(--chip-border);
+  border-radius: 999px;
+}
+
+:root[data-theme='dark'] .drinks-card .drinks-scroll-area::-webkit-scrollbar-thumb {
+  background: var(--selector-border);
+}
+
+.drinks-card .drinks-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--chip-border) transparent;
+}
+
+:root[data-theme='dark'] .drinks-card .drinks-scroll-area {
+  scrollbar-color: var(--selector-border) transparent;
+}
+
+@media (max-width: 899px) {
+  .drinks-card {
+    overflow: visible;
+  }
+
+  .drinks-card .drinks-scroll-area {
+    padding-right: 0;
+    margin-right: 0;
+  }
+}
+
 .section-header h2 {
   margin: 0;
   font-family: "Playfair Display", Georgia, serif;

@@ -279,6 +279,7 @@ function renderIngredients() {
     empty.className = 'empty-state';
     empty.textContent = 'Add items to your fridge to start tracking availability.';
     elements.ingredientList.append(empty);
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
@@ -320,6 +321,7 @@ function renderIngredients() {
   }
 
   elements.ingredientList.append(fragment);
+  scheduleDrinksPanelHeightUpdate();
 }
 
 function normaliseIngredientInput(name) {
@@ -541,6 +543,7 @@ function renderDrinks() {
     empty.className = 'empty-state';
     empty.textContent = 'No drinks saved yet. Use the Add drink button to get started.';
     elements.drinksList.append(empty);
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
@@ -580,12 +583,14 @@ function renderDrinks() {
       empty.textContent = 'No drinks to display.';
     }
     elements.drinksList.append(empty);
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
   for (const drink of drinksToShow) {
     elements.drinksList.append(renderDrinkCard(drink));
   }
+  scheduleDrinksPanelHeightUpdate();
 }
 
 async function toggleIngredient(id, inStock) {
@@ -738,6 +743,7 @@ function setupEventListeners() {
 
 async function bootstrap() {
   setupEventListeners();
+  initializeLayoutSync();
   renderSelectedDrinkIngredients();
   updateDrinkFormState();
   try {
