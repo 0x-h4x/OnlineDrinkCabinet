@@ -2,39 +2,38 @@ let initialized = false;
 let frameId = null;
 let fridgeCard = null;
 let drinksCard = null;
-let drinksList = null;
 let drinksScrollArea = null;
 let layoutMediaQuery = null;
+let resizeObserver = null;
+let mediaChangeHandler = null;
 
-function ensureDrinksScrollArea(list) {
-  if (!list) {
-    return null;
+function clearComputedHeights() {
+  if (drinksCard) {
+    drinksCard.style.removeProperty('height');
   }
 
-  const parent = list.parentElement;
-  if (!parent) {
-    return null;
+  if (drinksScrollArea) {
+    drinksScrollArea.style.removeProperty('max-height');
   }
-
-  if (parent.classList.contains('drinks-scroll-area')) {
-    return parent;
-  }
-
-  const wrapper = document.createElement('div');
-  wrapper.className = 'drinks-scroll-area';
-  parent.insertBefore(wrapper, list);
-  wrapper.appendChild(list);
-  return wrapper;
 }
 
-function calculateNonScrollableHeight() {
+function getCardMetrics() {
   if (!drinksCard || !drinksScrollArea) {
-    return 0;
+    return null;
   }
 
   const cardRect = drinksCard.getBoundingClientRect();
   const scrollRect = drinksScrollArea.getBoundingClientRect();
-  return cardRect.height - scrollRect.height;
+  const style = window.getComputedStyle(drinksCard);
+
+  const paddingBottom = Number.parseFloat(style.paddingBottom) || 0;
+  const paddingTop = Number.parseFloat(style.paddingTop) || 0;
+  const offsetWithinCard = Math.max(0, scrollRect.top - cardRect.top - paddingTop);
+
+  return {
+    offsetWithinCard,
+    paddingBottom
+  };
 }
 
 function applyScrollAreaHeight() {
@@ -44,34 +43,50 @@ function applyScrollAreaHeight() {
     return;
   }
 
-  drinksScrollArea.style.removeProperty('max-height');
+  clearComputedHeights();
 
   if (layoutMediaQuery && !layoutMediaQuery.matches) {
     return;
   }
 
   const fridgeHeight = fridgeCard.getBoundingClientRect().height;
-  const nonScrollableHeight = calculateNonScrollableHeight();
-  const availableHeight = fridgeHeight - nonScrollableHeight;
 
-  if (Number.isFinite(availableHeight) && availableHeight > 0) {
-    drinksScrollArea.style.maxHeight = `${Math.floor(availableHeight)}px`;
+  if (!Number.isFinite(fridgeHeight) || fridgeHeight <= 0) {
+    return;
   }
+
+  const metrics = getCardMetrics();
+
+  if (!metrics) {
+    return;
+  }
+
+  const availableHeight = fridgeHeight - metrics.offsetWithinCard - metrics.paddingBottom;
+
+  if (!Number.isFinite(availableHeight)) {
+    return;
+  }
+
+  const clampedAvailable = Math.max(0, Math.floor(availableHeight));
+  const clampedCardHeight = Math.max(0, Math.floor(fridgeHeight));
+
+  drinksCard.style.height = `${clampedCardHeight}px`;
+  drinksScrollArea.style.maxHeight = `${clampedAvailable}px`;
 }
 
 function observeLayoutChanges() {
   if (typeof ResizeObserver === 'function') {
-    const observer = new ResizeObserver(() => scheduleDrinksPanelHeightUpdate());
-    observer.observe(fridgeCard);
-    observer.observe(drinksCard);
+    resizeObserver = new ResizeObserver(() => scheduleDrinksPanelHeightUpdate());
+    resizeObserver.observe(fridgeCard);
+    resizeObserver.observe(drinksCard);
   }
 
   if (layoutMediaQuery) {
-    const listener = () => scheduleDrinksPanelHeightUpdate();
+    mediaChangeHandler = () => scheduleDrinksPanelHeightUpdate();
     if (typeof layoutMediaQuery.addEventListener === 'function') {
-      layoutMediaQuery.addEventListener('change', listener);
+      layoutMediaQuery.addEventListener('change', mediaChangeHandler);
     } else if (typeof layoutMediaQuery.addListener === 'function') {
-      layoutMediaQuery.addListener(listener);
+      layoutMediaQuery.addListener(mediaChangeHandler);
     }
   }
 
@@ -87,15 +102,14 @@ export function initializeLayoutSync() {
     return;
   }
 
-  drinksList = document.getElementById('drinks-list');
-  drinksCard = drinksList?.closest('.drinks-card') ?? null;
+  drinksCard = document.querySelector('.drinks-card');
   fridgeCard = document.querySelector('.fridge-card');
 
-  if (!drinksList || !drinksCard || !fridgeCard) {
+  if (!drinksCard || !fridgeCard) {
     return;
   }
 
-  drinksScrollArea = ensureDrinksScrollArea(drinksList);
+  drinksScrollArea = drinksCard.querySelector('.drinks-scroll-area');
   if (!drinksScrollArea) {
     return;
   }

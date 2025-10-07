@@ -269,7 +269,7 @@ body.modal-open-fallback::after {
 }
 
 .drinks-card .drinks-scroll-area {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   scroll-behavior: smooth;
