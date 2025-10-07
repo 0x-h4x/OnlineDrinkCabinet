@@ -30,7 +30,26 @@ const elements = {
   openDrinkDialog: document.getElementById('open-add-drink'),
   cancelDrinkDialog: document.getElementById('cancel-add-drink'),
   closeDrinkDialog: document.getElementById('close-add-drink'),
-  drinkDialog: document.getElementById('add-drink-dialog')
+  drinkDialog: document.getElementById('add-drink-dialog'),
+  themeToggle: document.getElementById('theme-toggle'),
+  drinksCard: document.querySelector('.drinks-card'),
+  fridgeCard: document.querySelector('.fridge-card')
+};
+
+const THEME_STORAGE_KEY = 'odc-theme';
+let storedThemePreference;
+const prefersDarkScheme =
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia('(prefers-color-scheme: dark)')
+    : null;
+
+const layoutSyncState = {
+  rafId: 0,
+  observer: null,
+  mediaQuery:
+    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('(min-width: 900px)')
+      : null
 };
 
 async function fetchJSON(url, options) {
@@ -42,6 +61,154 @@ async function fetchJSON(url, options) {
   return response.json();
 }
 
+function readStoredThemePreference() {
+  if (typeof storedThemePreference !== 'undefined') {
+    return storedThemePreference;
+  }
+
+  try {
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
+    storedThemePreference = value === 'light' || value === 'dark' ? value : null;
+  } catch (error) {
+    storedThemePreference = null;
+  }
+
+  return storedThemePreference;
+}
+
+function persistThemePreference(theme) {
+  storedThemePreference = theme;
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    // Ignore storage failures (e.g. privacy mode)
+  }
+}
+
+function applyTheme(theme) {
+  const activeTheme = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', activeTheme);
+
+  const label = activeTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  if (elements.themeToggle) {
+    elements.themeToggle.setAttribute('aria-label', label);
+    elements.themeToggle.setAttribute('title', label);
+    elements.themeToggle.setAttribute('aria-pressed', activeTheme === 'dark' ? 'true' : 'false');
+  }
+}
+
+function toggleThemePreference() {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  persistThemePreference(next);
+}
+
+function handleThemeToggle() {
+  toggleThemePreference();
+}
+
+function handleSystemThemeChange(event) {
+  if (readStoredThemePreference()) {
+    return;
+  }
+  applyTheme(event.matches ? 'dark' : 'light');
+}
+
+function initializeTheme() {
+  const storedPreference = readStoredThemePreference();
+  if (storedPreference === 'light' || storedPreference === 'dark') {
+    applyTheme(storedPreference);
+  } else if (prefersDarkScheme) {
+    applyTheme(prefersDarkScheme.matches ? 'dark' : 'light');
+  } else {
+    applyTheme('light');
+  }
+
+  if (prefersDarkScheme) {
+    if (typeof prefersDarkScheme.addEventListener === 'function') {
+      prefersDarkScheme.addEventListener('change', handleSystemThemeChange);
+    } else if (typeof prefersDarkScheme.addListener === 'function') {
+      prefersDarkScheme.addListener(handleSystemThemeChange);
+    }
+  }
+}
+
+function isTwoColumnLayout() {
+  if (layoutSyncState.mediaQuery && typeof layoutSyncState.mediaQuery.matches === 'boolean') {
+    return layoutSyncState.mediaQuery.matches;
+  }
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return window.innerWidth >= 900;
+}
+
+function clearDrinksPanelHeight() {
+  if (!elements.drinksCard) return;
+  elements.drinksCard.style.removeProperty('height');
+  elements.drinksCard.style.removeProperty('max-height');
+}
+
+function updateDrinksPanelHeight() {
+  layoutSyncState.rafId = 0;
+  if (!elements.drinksCard || !elements.fridgeCard) return;
+
+  if (!isTwoColumnLayout()) {
+    clearDrinksPanelHeight();
+    return;
+  }
+
+  const fridgeRect = elements.fridgeCard.getBoundingClientRect();
+  if (!fridgeRect || fridgeRect.height <= 0) {
+    return;
+  }
+
+  const targetHeight = Math.round(fridgeRect.height);
+  elements.drinksCard.style.height = `${targetHeight}px`;
+  elements.drinksCard.style.maxHeight = `${targetHeight}px`;
+}
+
+function scheduleDrinksPanelHeightUpdate() {
+  if (layoutSyncState.rafId && typeof cancelAnimationFrame === 'function') {
+    cancelAnimationFrame(layoutSyncState.rafId);
+    layoutSyncState.rafId = 0;
+  }
+
+  if (typeof requestAnimationFrame === 'function') {
+    layoutSyncState.rafId = requestAnimationFrame(updateDrinksPanelHeight);
+  } else {
+    updateDrinksPanelHeight();
+  }
+}
+
+function initializeLayoutSync() {
+  if (!elements.drinksCard || !elements.fridgeCard) {
+    return;
+  }
+
+  if (typeof ResizeObserver === 'function') {
+    layoutSyncState.observer = new ResizeObserver(() => {
+      scheduleDrinksPanelHeightUpdate();
+    });
+    layoutSyncState.observer.observe(elements.fridgeCard);
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', scheduleDrinksPanelHeightUpdate);
+  }
+
+  if (layoutSyncState.mediaQuery) {
+    if (typeof layoutSyncState.mediaQuery.addEventListener === 'function') {
+      layoutSyncState.mediaQuery.addEventListener('change', scheduleDrinksPanelHeightUpdate);
+    } else if (typeof layoutSyncState.mediaQuery.addListener === 'function') {
+      layoutSyncState.mediaQuery.addListener(scheduleDrinksPanelHeightUpdate);
+    }
+  }
+
+  scheduleDrinksPanelHeightUpdate();
+}
+
 async function loadIngredients() {
   const data = await fetchJSON('/api/ingredients');
   state.ingredients = data.map((item) => ({
@@ -51,6 +218,7 @@ async function loadIngredients() {
   syncDrinkAvailability();
   renderIngredients();
   updateIngredientCatalog();
+  updateIngredientCategoryOptions();
   renderDrinks();
 }
 
@@ -76,6 +244,57 @@ function updateIngredientCatalog() {
     drinkOption.value = ingredient.name;
     elements.drinkIngredientCatalog.append(drinkOption);
   }
+}
+
+function updateIngredientCategoryOptions() {
+  const select = elements.ingredientCategory;
+  if (!select) return;
+
+  const previousValue = select.value;
+  const categories = new Set();
+
+  for (const ingredient of state.ingredients) {
+    const label = ingredient.category?.trim();
+    if (label && label.toLowerCase() !== 'other') {
+      categories.add(label);
+    }
+  }
+
+  const sorted = [...categories].sort((a, b) => a.localeCompare(b));
+
+  select.innerHTML = '';
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Select a category';
+  placeholder.disabled = true;
+  placeholder.hidden = true;
+  select.append(placeholder);
+
+  for (const category of sorted) {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    select.append(option);
+  }
+
+  const otherOption = document.createElement('option');
+  otherOption.value = 'Other';
+  otherOption.textContent = 'Other category';
+  select.append(otherOption);
+
+  const hasPreviousSelection =
+    previousValue && Array.from(select.options).some((option) => option.value === previousValue);
+
+  if (hasPreviousSelection) {
+    select.value = previousValue;
+    placeholder.selected = false;
+  } else {
+    placeholder.selected = true;
+    select.value = '';
+  }
+
+  select.setCustomValidity('');
 }
 
 function updateDrinkAvailability(drinks, availability) {
@@ -146,6 +365,7 @@ function renderIngredients() {
     empty.className = 'empty-state';
     empty.textContent = 'Add items to your fridge to start tracking availability.';
     elements.ingredientList.append(empty);
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
@@ -187,6 +407,7 @@ function renderIngredients() {
   }
 
   elements.ingredientList.append(fragment);
+  scheduleDrinksPanelHeightUpdate();
 }
 
 function normaliseIngredientInput(name) {
@@ -408,10 +629,32 @@ function renderDrinks() {
     empty.className = 'empty-state';
     empty.textContent = 'No drinks saved yet. Use the Add drink button to get started.';
     elements.drinksList.append(empty);
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
-  const drinksToShow = state.drinks.filter(shouldDisplayDrink);
+  const drinksToShow = state.drinks
+    .filter(shouldDisplayDrink)
+    .sort((a, b) => {
+      const summaryA = summariseDrink(a);
+      const summaryB = summariseDrink(b);
+      const ratioA = summaryA.total === 0 ? 0 : summaryA.available / summaryA.total;
+      const ratioB = summaryB.total === 0 ? 0 : summaryB.available / summaryB.total;
+
+      if (ratioB !== ratioA) {
+        return ratioB - ratioA;
+      }
+
+      if (summaryB.available !== summaryA.available) {
+        return summaryB.available - summaryA.available;
+      }
+
+      if (summaryB.total !== summaryA.total) {
+        return summaryB.total - summaryA.total;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
   if (drinksToShow.length === 0) {
     const empty = document.createElement('li');
     empty.className = 'empty-state';
@@ -426,12 +669,14 @@ function renderDrinks() {
       empty.textContent = 'No drinks to display.';
     }
     elements.drinksList.append(empty);
+    scheduleDrinksPanelHeightUpdate();
     return;
   }
 
   for (const drink of drinksToShow) {
     elements.drinksList.append(renderDrinkCard(drink));
   }
+  scheduleDrinksPanelHeightUpdate();
 }
 
 async function toggleIngredient(id, inStock) {
@@ -451,18 +696,28 @@ async function toggleIngredient(id, inStock) {
 async function handleIngredientSubmit(event) {
   event.preventDefault();
   const name = elements.ingredientName?.value.trim();
-  const category = elements.ingredientCategory?.value.trim();
+  const categorySelect = elements.ingredientCategory;
+  const category = categorySelect?.value.trim();
   if (!name) return;
+  if (!category) {
+    if (categorySelect) {
+      categorySelect.setCustomValidity('Select a category for this ingredient.');
+      categorySelect.reportValidity();
+    }
+    return;
+  }
 
   try {
     await fetchJSON('/api/ingredients', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, category: category || null, inStock: true })
+      body: JSON.stringify({ name, category, inStock: true })
     });
     if (elements.ingredientForm) {
       elements.ingredientForm.reset();
     }
+    updateIngredientCategoryOptions();
+    elements.ingredientCategory?.setCustomValidity('');
     await loadIngredients();
   } catch (error) {
     console.error(error);
@@ -556,6 +811,11 @@ function handleAddIngredientButton() {
 
 function setupEventListeners() {
   elements.ingredientForm?.addEventListener('submit', handleIngredientSubmit);
+  elements.ingredientCategory?.addEventListener('change', () => {
+    if (elements.ingredientCategory?.value) {
+      elements.ingredientCategory.setCustomValidity('');
+    }
+  });
   elements.resetInventory?.addEventListener('click', handleResetInventory);
   elements.drinkForm?.addEventListener('submit', handleDrinkSubmit);
   elements.filterGroup?.addEventListener('click', handleFilterClick);
@@ -564,10 +824,12 @@ function setupEventListeners() {
   elements.drinkIngredientSearch?.addEventListener('keydown', handleDrinkIngredientKeydown);
   elements.selectedDrinkIngredients?.addEventListener('click', handleSelectedIngredientClick);
   elements.addIngredientToDrink?.addEventListener('click', handleAddIngredientButton);
+  elements.themeToggle?.addEventListener('click', handleThemeToggle);
 }
 
 async function bootstrap() {
   setupEventListeners();
+  initializeLayoutSync();
   renderSelectedDrinkIngredients();
   updateDrinkFormState();
   try {
@@ -577,4 +839,5 @@ async function bootstrap() {
   }
 }
 
+initializeTheme();
 bootstrap();
