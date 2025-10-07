@@ -1,3 +1,15 @@
+import * as layoutSync from './layout-sync.js';
+
+const initializeLayoutSync =
+  typeof layoutSync.initializeLayoutSync === 'function'
+    ? layoutSync.initializeLayoutSync
+    : () => {};
+
+const scheduleDrinksPanelHeightUpdate =
+  typeof layoutSync.scheduleDrinksPanelHeightUpdate === 'function'
+    ? layoutSync.scheduleDrinksPanelHeightUpdate
+    : () => {};
+
 const state = {
   ingredients: [],
   drinks: [],
