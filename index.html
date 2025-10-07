@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Drink Cabinet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Drink Cabinet</title>
+    <script>
+      (function () {
+        try {
+          const stored = localStorage.getItem('odc-theme');
+          const theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (error) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
-<body>
-  <header class="app-header">
-    <h1>Online Drink Cabinet</h1>
-    <p class="tagline">Keep track of your bar cart and explore cocktails you can make right now.</p>
-  </header>
+  <body>
+    <header class="app-header">
+      <button type="button" id="theme-toggle" class="icon-btn theme-toggle" aria-label="Switch to dark mode">
+        <span class="theme-icon theme-icon-moon" aria-hidden="true">🌙</span>
+        <span class="theme-icon theme-icon-sun" aria-hidden="true">☀️</span>
+      </button>
+      <h1>Online Drink Cabinet</h1>
+      <p class="tagline">Keep track of your bar cart and explore cocktails you can make right now.</p>
+    </header>
 
   <main class="app-layout">
-    <section class="card" aria-labelledby="fridge-heading">
+    <section class="card fridge-card" aria-labelledby="fridge-heading">
       <div class="section-header">
         <h2 id="fridge-heading">Fridge &amp; Pantry</h2>
         <p>Manage the ingredients you currently have in stock.</p>
@@ -28,8 +48,11 @@
           <input type="text" id="ingredient-input" list="ingredient-catalog" placeholder="e.g. Gin" required />
         </label>
         <label class="form-control">
-          <span>Category <small>(optional)</small></span>
-          <input type="text" id="ingredient-category" placeholder="e.g. Base Spirit" />
+          <span>Category</span>
+          <select id="ingredient-category" required>
+            <option value="" disabled selected hidden>Select a category</option>
+            <option value="Other">Other category</option>
+          </select>
         </label>
         <button type="submit" class="primary-btn">Add ingredient</button>
       </form>
@@ -44,7 +67,7 @@
       <div id="inventory-list" class="ingredient-groups" aria-live="polite"></div>
     </section>
 
-    <section class="card" aria-labelledby="drinks-heading">
+    <section class="card drinks-card" aria-labelledby="drinks-heading">
       <div class="section-header">
         <h2 id="drinks-heading">Cocktail Library</h2>
         <p>Browse existing drinks or add your own favourites.</p>
@@ -106,7 +129,10 @@
           <button type="button" data-filter="missing" class="chip">Missing ingredients</button>
         </div>
 
-      <ul id="drinks-list" class="drinks-list" aria-live="polite"></ul>
+      </div>
+      <div class="drinks-scroll-area" role="presentation">
+        <ul id="drinks-list" class="drinks-list" aria-live="polite"></ul>
+      </div>
     </section>
   </main>
 
