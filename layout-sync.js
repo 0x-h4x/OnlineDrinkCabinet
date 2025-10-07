@@ -2,30 +2,8 @@ let initialized = false;
 let frameId = null;
 let fridgeCard = null;
 let drinksCard = null;
-let drinksList = null;
 let drinksScrollArea = null;
 let layoutMediaQuery = null;
-
-function ensureDrinksScrollArea(list) {
-  if (!list) {
-    return null;
-  }
-
-  const parent = list.parentElement;
-  if (!parent) {
-    return null;
-  }
-
-  if (parent.classList.contains('drinks-scroll-area')) {
-    return parent;
-  }
-
-  const wrapper = document.createElement('div');
-  wrapper.className = 'drinks-scroll-area';
-  parent.insertBefore(wrapper, list);
-  wrapper.appendChild(list);
-  return wrapper;
-}
 
 function calculateNonScrollableHeight() {
   if (!drinksCard || !drinksScrollArea) {
@@ -87,15 +65,14 @@ export function initializeLayoutSync() {
     return;
   }
 
-  drinksList = document.getElementById('drinks-list');
-  drinksCard = drinksList?.closest('.drinks-card') ?? null;
+  drinksCard = document.querySelector('.drinks-card');
   fridgeCard = document.querySelector('.fridge-card');
 
-  if (!drinksList || !drinksCard || !fridgeCard) {
+  if (!drinksCard || !fridgeCard) {
     return;
   }
 
-  drinksScrollArea = ensureDrinksScrollArea(drinksList);
+  drinksScrollArea = drinksCard.querySelector('.drinks-scroll-area');
   if (!drinksScrollArea) {
     return;
   }
