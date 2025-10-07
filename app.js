@@ -31,9 +31,7 @@ const elements = {
   cancelDrinkDialog: document.getElementById('cancel-add-drink'),
   closeDrinkDialog: document.getElementById('close-add-drink'),
   drinkDialog: document.getElementById('add-drink-dialog'),
-  themeToggle: document.getElementById('theme-toggle'),
-  drinksCard: document.querySelector('.drinks-card'),
-  fridgeCard: document.querySelector('.fridge-card')
+  themeToggle: document.getElementById('theme-toggle')
 };
 
 const THEME_STORAGE_KEY = 'odc-theme';
@@ -42,15 +40,6 @@ const prefersDarkScheme =
   typeof window !== 'undefined' && typeof window.matchMedia === 'function'
     ? window.matchMedia('(prefers-color-scheme: dark)')
     : null;
-
-const layoutSyncState = {
-  rafId: 0,
-  observer: null,
-  mediaQuery:
-    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-      ? window.matchMedia('(min-width: 900px)')
-      : null
-};
 
 async function fetchJSON(url, options) {
   const response = await fetch(url, options);
@@ -132,81 +121,6 @@ function initializeTheme() {
       prefersDarkScheme.addListener(handleSystemThemeChange);
     }
   }
-}
-
-function isTwoColumnLayout() {
-  if (layoutSyncState.mediaQuery && typeof layoutSyncState.mediaQuery.matches === 'boolean') {
-    return layoutSyncState.mediaQuery.matches;
-  }
-  if (typeof window === 'undefined') {
-    return false;
-  }
-  return window.innerWidth >= 900;
-}
-
-function clearDrinksPanelHeight() {
-  if (!elements.drinksCard) return;
-  elements.drinksCard.style.removeProperty('height');
-  elements.drinksCard.style.removeProperty('max-height');
-}
-
-function updateDrinksPanelHeight() {
-  layoutSyncState.rafId = 0;
-  if (!elements.drinksCard || !elements.fridgeCard) return;
-
-  if (!isTwoColumnLayout()) {
-    clearDrinksPanelHeight();
-    return;
-  }
-
-  const fridgeRect = elements.fridgeCard.getBoundingClientRect();
-  if (!fridgeRect || fridgeRect.height <= 0) {
-    return;
-  }
-
-  const targetHeight = Math.round(fridgeRect.height);
-  elements.drinksCard.style.height = `${targetHeight}px`;
-  elements.drinksCard.style.maxHeight = `${targetHeight}px`;
-}
-
-function scheduleDrinksPanelHeightUpdate() {
-  if (layoutSyncState.rafId && typeof cancelAnimationFrame === 'function') {
-    cancelAnimationFrame(layoutSyncState.rafId);
-    layoutSyncState.rafId = 0;
-  }
-
-  if (typeof requestAnimationFrame === 'function') {
-    layoutSyncState.rafId = requestAnimationFrame(updateDrinksPanelHeight);
-  } else {
-    updateDrinksPanelHeight();
-  }
-}
-
-function initializeLayoutSync() {
-  if (!elements.drinksCard || !elements.fridgeCard) {
-    return;
-  }
-
-  if (typeof ResizeObserver === 'function') {
-    layoutSyncState.observer = new ResizeObserver(() => {
-      scheduleDrinksPanelHeightUpdate();
-    });
-    layoutSyncState.observer.observe(elements.fridgeCard);
-  }
-
-  if (typeof window !== 'undefined') {
-    window.addEventListener('resize', scheduleDrinksPanelHeightUpdate);
-  }
-
-  if (layoutSyncState.mediaQuery) {
-    if (typeof layoutSyncState.mediaQuery.addEventListener === 'function') {
-      layoutSyncState.mediaQuery.addEventListener('change', scheduleDrinksPanelHeightUpdate);
-    } else if (typeof layoutSyncState.mediaQuery.addListener === 'function') {
-      layoutSyncState.mediaQuery.addListener(scheduleDrinksPanelHeightUpdate);
-    }
-  }
-
-  scheduleDrinksPanelHeightUpdate();
 }
 
 async function loadIngredients() {
