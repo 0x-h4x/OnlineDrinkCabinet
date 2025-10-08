@@ -407,6 +407,7 @@ textarea::placeholder {
   color: var(--text-subtle);
   font-weight: 400;
   font-size: 0.9rem;
+  margin: auto
 }
 
 .selector-controls {

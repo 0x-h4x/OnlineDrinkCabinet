@@ -390,6 +390,21 @@ const baseDrinks = [
     ingredients: ['Rye whiskey', 'Sugar cube', 'Angostura bitters'],
     instructions:
       'Muddle sugar cube with 2 dashes Angostura and splash of water. Add 60 ml rye whiskey and ice. Stir.'
+  },
+  {
+    name: 'Long Island Iced Tea',
+    ingredients: [
+      'Vodka',
+      'White rum',
+      'Gin',
+      'Tequila (silver)',
+      'Triple sec',
+      'Lemon juice',
+      'Simple syrup',
+      'Cola'
+    ],
+    instructions:
+      'Shake 15 ml each vodka, white rum, gin, tequila, and triple sec with 25 ml lemon juice and 15 ml simple syrup. Strain into a tall glass with ice. Top with 60 ml cola. Stir once. Garnish with a lemon wedge.'
   }
 ];
 
