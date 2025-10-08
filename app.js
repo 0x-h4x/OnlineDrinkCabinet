@@ -59,7 +59,20 @@ async function fetchJSON(url, options) {
     const message = await response.json().catch(() => ({ message: 'Request failed' }));
     throw new Error(message.message || 'Request failed');
   }
-  return response.json();
+  if (response.status === 204) {
+    return null;
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return null;
+  }
 }
 
 function readStoredThemePreference() {
@@ -261,9 +274,32 @@ function renderIngredientPill(ingredient) {
   item.tabIndex = 0;
   item.title = ingredient.inStock ? 'Mark as out of stock' : 'Mark as in stock';
   item.setAttribute('aria-pressed', ingredient.inStock ? 'true' : 'false');
-  item.textContent = ingredient.name;
-  item.addEventListener('click', () => toggleIngredient(ingredient.id, !ingredient.inStock));
+  const label = document.createElement('span');
+  label.className = 'pill-label';
+  label.textContent = ingredient.name;
+
+  const deleteButton = document.createElement('button');
+  deleteButton.type = 'button';
+  deleteButton.className = 'pill-delete';
+  deleteButton.setAttribute('aria-label', `Delete ${ingredient.name}`);
+  deleteButton.textContent = '×';
+  deleteButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    deleteIngredient(ingredient.id, ingredient.name);
+  });
+
+  item.append(label, deleteButton);
+
+  item.addEventListener('click', (event) => {
+    if (event.target.closest('button')) {
+      return;
+    }
+    toggleIngredient(ingredient.id, !ingredient.inStock);
+  });
   item.addEventListener('keydown', (event) => {
+    if (event.target !== item) {
+      return;
+    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       toggleIngredient(ingredient.id, !ingredient.inStock);
@@ -543,6 +579,16 @@ function renderDrinkCard(drink) {
     missingText.textContent = 'Everything you need is on hand.';
   }
 
+  const deleteButton = node.querySelector('[data-action="delete-drink"]');
+  if (deleteButton) {
+    deleteButton.setAttribute('aria-label', `Delete ${drink.name}`);
+    deleteButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      deleteDrink(drink.id, drink.name);
+    });
+  }
+
   return node;
 }
 
@@ -613,6 +659,36 @@ async function toggleIngredient(id, inStock) {
       body: JSON.stringify({ inStock })
     });
     await loadIngredients();
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+}
+
+async function deleteIngredient(id, name) {
+  const message = name ? `Delete ${name} from your ingredients?` : 'Delete this ingredient?';
+  if (!window.confirm(message)) {
+    return;
+  }
+
+  try {
+    await fetchJSON(`/api/ingredients/${id}`, { method: 'DELETE' });
+    await Promise.all([loadIngredients(), loadDrinks()]);
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
+}
+
+async function deleteDrink(id, name) {
+  const message = name ? `Delete the drink "${name}"?` : 'Delete this drink?';
+  if (!window.confirm(message)) {
+    return;
+  }
+
+  try {
+    await fetchJSON(`/api/drinks/${id}`, { method: 'DELETE' });
+    await loadDrinks();
   } catch (error) {
     console.error(error);
     alert(error.message);
