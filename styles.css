@@ -536,12 +536,42 @@ textarea:focus {
   transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.pill-label {
+  flex: 1;
+}
+
 .pill button {
   border: none;
   background: none;
   color: var(--secondary-btn-text);
   font-weight: 600;
   cursor: pointer;
+}
+
+.pill-delete {
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.pill-delete:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme='dark'] .pill-delete:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pill-delete:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  outline-offset: 1px;
 }
 
 .pill:focus-visible {
@@ -742,6 +772,30 @@ textarea:focus {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+}
+
+.drink-header-info {
+  flex: 1;
+}
+
+.drink-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drink-delete-btn {
+  font-size: 1.35rem;
+  color: var(--icon-color);
+}
+
+.drink-delete-btn:hover {
+  color: var(--icon-hover-color);
+}
+
+.drink-delete-btn:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  border-radius: 8px;
 }
 
 .drink-title {
