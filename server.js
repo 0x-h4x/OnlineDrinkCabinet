@@ -288,6 +288,18 @@ app.get('/api/drinks', (req, res) => {
 
 const insertDrinkStatement = db.prepare('INSERT INTO drinks (name, instructions) VALUES (?, ?)');
 const linkIngredientStatement = db.prepare('INSERT INTO drink_ingredients (drink_id, ingredient_id) VALUES (?, ?)');
+const selectIngredientById = db.prepare(
+  'SELECT id, name, category, in_stock as inStock FROM ingredients WHERE id = ?'
+);
+const deleteIngredientIfUnusedStatement = db.prepare(`
+  DELETE FROM ingredients
+  WHERE id = ?
+    AND NOT EXISTS (SELECT 1 FROM drink_ingredients WHERE ingredient_id = ?)
+`);
+const deleteDrinkStatement = db.prepare('DELETE FROM drinks WHERE id = ?');
+const ingredientUsageCheckStatement = db.prepare(
+  'SELECT 1 FROM drink_ingredients WHERE ingredient_id = ? LIMIT 1'
+);
 
 app.post('/api/drinks', (req, res, next) => {
   const validation = validateDrinkPayload(req.body);
@@ -319,6 +331,43 @@ app.post('/api/drinks', (req, res, next) => {
     }
     next(error);
   }
+});
+
+app.delete('/api/ingredients/:id', (req, res) => {
+  const { id } = req.params;
+  const ingredientId = Number.parseInt(id, 10);
+  if (!Number.isInteger(ingredientId)) {
+    return res.status(400).json({ message: 'Invalid ingredient id.' });
+  }
+
+  const ingredient = selectIngredientById.get(ingredientId);
+  if (!ingredient) {
+    return res.status(404).json({ message: 'Ingredient not found.' });
+  }
+
+  const inUse = ingredientUsageCheckStatement.get(ingredientId);
+  if (inUse) {
+    return res
+      .status(409)
+      .json({ message: 'This ingredient is used by one or more drinks and cannot be deleted.' });
+  }
+
+  const result = deleteIngredientIfUnusedStatement.run(ingredientId, ingredientId);
+  if (result.changes === 0) {
+    return res
+      .status(409)
+      .json({ message: 'This ingredient is used by one or more drinks and cannot be deleted.' });
+  }
+  res.status(204).end();
+});
+
+app.delete('/api/drinks/:id', (req, res) => {
+  const { id } = req.params;
+  const result = deleteDrinkStatement.run(id);
+  if (result.changes === 0) {
+    return res.status(404).json({ message: 'Drink not found.' });
+  }
+  res.status(204).end();
 });
 
 app.use((err, req, res, next) => {

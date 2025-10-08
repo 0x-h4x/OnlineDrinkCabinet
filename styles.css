@@ -134,6 +134,8 @@
 body {
   margin: 0;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: var(--bg-color);
   background-image: var(--body-gradient);
 }
@@ -250,8 +252,9 @@ body.modal-open-fallback::after {
   gap: 2rem;
   padding: 0 1.5rem 3rem;
   max-width: 1100px;
-  margin: 0 auto 3rem;
-  max-height: 100vh;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1 0 auto;
 }
 
 .card {
@@ -536,12 +539,42 @@ textarea:focus {
   transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.pill-label {
+  flex: 1;
+}
+
 .pill button {
   border: none;
   background: none;
   color: var(--secondary-btn-text);
   font-weight: 600;
   cursor: pointer;
+}
+
+.pill-delete {
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.pill-delete:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme='dark'] .pill-delete:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pill-delete:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  outline-offset: 1px;
 }
 
 .pill:focus-visible {
@@ -737,11 +770,48 @@ textarea:focus {
   gap: 0.75rem;
 }
 
+.app-footer {
+  margin-top: auto;
+  margin-bottom: 1.5rem;
+  padding: 2rem 1.5rem 0;
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .drink-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+}
+
+.drink-header-info {
+  flex: 1;
+}
+
+.drink-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drink-delete-btn {
+  font-size: 1.35rem;
+  color: var(--icon-color);
+}
+
+.drink-delete-btn:hover {
+  color: var(--icon-hover-color);
+}
+
+.drink-delete-btn:focus-visible {
+  outline: 3px solid var(--accent-muted);
+  border-radius: 8px;
 }
 
 .drink-title {

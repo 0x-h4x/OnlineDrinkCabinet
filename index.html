@@ -193,11 +193,21 @@
   <template id="drink-template">
     <li class="drink-card">
       <header class="drink-header">
-        <div>
+        <div class="drink-header-info">
           <h3 class="drink-title"></h3>
           <p class="drink-status"></p>
         </div>
-        <span class="drink-badge" aria-hidden="true"></span>
+        <div class="drink-header-actions">
+          <span class="drink-badge" aria-hidden="true"></span>
+          <button
+            type="button"
+            class="icon-btn drink-delete-btn"
+            data-action="delete-drink"
+            aria-label="Delete drink"
+          >
+            ×
+          </button>
+        </div>
       </header>
       <details class="drink-details">
         <summary>
@@ -210,6 +220,8 @@
       </details>
     </li>
   </template>
+
+  <footer class="app-footer">Shaken, not deployed 🍸-- yet, by Hax.</footer>
 
   <script src="app.js" type="module"></script>
 </body>
