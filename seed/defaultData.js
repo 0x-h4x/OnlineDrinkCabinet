@@ -65,7 +65,7 @@ const baseDrinks = [
   },
   {
     name: 'Elderflower Gin & Tonic',
-    ingredients: ['Gin', 'Tonic water', 'Elderflower syrup', 'Lime juice'],
+    ingredients: ['Gin', 'Tonic water', 'Elderflower syrup', 'Lime juice', 'Cucumber'],
     instructions:
       'Add 45 ml gin, 10 ml elderflower syrup, and 10 ml lime juice to a glass of ice. Top with 120 ml tonic water. Stir gently and garnish with cucumber.'
   },
@@ -149,7 +149,7 @@ const baseDrinks = [
   },
   {
     name: 'Margarita Classic',
-    ingredients: ['Tequila (silver)', 'Lime juice', 'Triple sec', 'Simple syrup'],
+    ingredients: ['Tequila (silver)', 'Lime juice', 'Triple sec', 'Simple syrup', 'Salt'],
     instructions:
       'Shake 45 ml tequila, 15 ml triple sec, 20 ml lime juice, 10 ml simple syrup. Strain over ice. Garnish lime wedge.'
   },
@@ -161,7 +161,7 @@ const baseDrinks = [
   },
   {
     name: 'French Blossom',
-    ingredients: ['Gin', 'Elderflower syrup', 'Lemon juice', 'Prosecco'],
+    ingredients: ['Gin', 'Elderflower syrup', 'Lemon juice', 'Prosecco', 'Edible flowers'],
     instructions:
       'Shake 45 ml gin, 15 ml elderflower syrup, 15 ml lemon juice with ice. Strain into flute. Top with 60 ml prosecco.'
   },
@@ -190,7 +190,7 @@ const baseDrinks = [
   },
   {
     name: 'Paloma Highball',
-    ingredients: ['Tequila (silver)', 'Grapefruit juice', 'Sparkling water', 'Simple syrup', 'Lime juice'],
+    ingredients: ['Tequila (silver)', 'Grapefruit juice', 'Sparkling water', 'Simple syrup', 'Lime juice', 'Salt'],
     instructions:
       'Shake tequila, 60 ml grapefruit, 10 ml lime, 10 ml simple syrup. Pour over ice. Top with sparkling water.'
   },
@@ -226,7 +226,7 @@ const baseDrinks = [
   },
   {
     name: 'Mimosa',
-    ingredients: ['Orange juice', 'Prosecco'],
+    ingredients: ['Orange juice', 'Prosecco', 'Edible flowers'],
     instructions: 'Combine equal parts (60 ml each) orange juice and prosecco in flute. No ice.'
   },
   {
@@ -243,13 +243,13 @@ const baseDrinks = [
   },
   {
     name: 'Old Fashioned',
-    ingredients: ['Bourbon', 'Sugar cube', 'Angostura bitters'],
+    ingredients: ['Bourbon', 'Sugar cube', 'Angostura bitters', 'Maraschino cherries'],
     instructions:
       'Muddle sugar cube with 2 dashes Angostura bitters and splash of water. Add 60 ml bourbon, ice, and stir. Garnish with orange peel.'
   },
   {
     name: 'Mojito',
-    ingredients: ['White rum', 'Lime juice', 'Mint leaves', 'Brown sugar', 'Soda water'],
+    ingredients: ['White rum', 'Lime juice', 'Mint leaves', 'Brown sugar', 'Soda water', 'Mint sprig'],
     instructions:
       'Muddle 2 tsp brown sugar, lime juice, and mint leaves. Add 45 ml rum and ice. Top with soda water. Garnish mint sprig.'
   },
@@ -261,7 +261,7 @@ const baseDrinks = [
   },
   {
     name: 'Manhattan',
-    ingredients: ['Rye whiskey', 'Sweet vermouth', 'Angostura bitters'],
+    ingredients: ['Rye whiskey', 'Sweet vermouth', 'Angostura bitters', 'Maraschino cherries'],
     instructions:
       'Stir 50 ml rye whiskey, 20 ml sweet vermouth, 2 dashes bitters with ice. Strain into coupe. Garnish cherry.'
   },
@@ -309,15 +309,87 @@ const baseDrinks = [
   },
   {
     name: 'Margarita Frozen',
-    ingredients: ['Tequila (silver)', 'Triple sec', 'Lime juice', 'Simple syrup'],
+    ingredients: ['Tequila (silver)', 'Triple sec', 'Lime juice', 'Simple syrup', 'Salt'],
     instructions:
       'Blend 45 ml tequila, 15 ml triple sec, 20 ml lime juice, 10 ml simple syrup with ice. Pour into salt-rimmed glass.'
   },
   {
     name: 'Mai Tai Classic',
-    ingredients: ['White rum', 'Dark rum', 'Lime juice', 'Orgeat', 'Triple sec'],
+    ingredients: ['White rum', 'Dark rum', 'Lime juice', 'Orgeat', 'Triple sec', 'Mint sprig'],
     instructions:
       'Shake 30 ml white rum, 30 ml dark rum, 20 ml lime, 15 ml orgeat, 10 ml triple sec. Strain over crushed ice. Garnish mint sprig.'
+  },
+  {
+    name: 'Dark n Stormy',
+    ingredients: ['Dark rum', 'Ginger beer', 'Lime juice'],
+    instructions:
+      'Add 60 ml dark rum over ice. Top with 120 ml ginger beer and 10 ml lime juice. Stir once.'
+  },
+  {
+    name: 'Bloody Maria',
+    ingredients: ['Tequila (silver)', 'Tomato juice', 'Lemon juice', 'Worcestershire sauce', 'Tabasco', 'Salt', 'Pepper'],
+    instructions:
+      'Build in glass with ice: 45 ml tequila, 90 ml tomato juice, 15 ml lemon juice, 2 dashes Worcestershire, 2 dashes Tabasco, pinch salt and pepper. Stir.'
+  },
+  {
+    name: 'Bourbon & Cola',
+    ingredients: ['Bourbon', 'Cola', 'Lime juice'],
+    instructions:
+      'Add 60 ml bourbon to glass with ice. Squeeze 10 ml lime juice. Top with 120 ml cola. Stir once.'
+  },
+  {
+    name: 'Prosecco Cocktail',
+    ingredients: ['Prosecco', 'Sugar cube', 'Angostura bitters'],
+    instructions:
+      'Place sugar cube in flute, add 2 dashes Angostura, top with 120 ml prosecco.'
+  },
+  {
+    name: 'Vodka Martini',
+    ingredients: ['Vodka', 'Dry vermouth'],
+    instructions:
+      'Stir 60 ml vodka and 10 ml dry vermouth with ice. Strain into chilled martini glass.'
+  },
+  {
+    name: 'Batida de Coco',
+    ingredients: ['Cachaça', 'Coconut cream', 'Pineapple juice', 'Simple syrup'],
+    instructions:
+      'Shake 60 ml cachaça, 60 ml pineapple juice, 30 ml coconut cream, 10 ml simple syrup with ice. Pour into glass.'
+  },
+  {
+    name: 'Aperol Sour',
+    ingredients: ['Aperol', 'Gin', 'Lemon juice', 'Simple syrup'],
+    instructions:
+      'Shake 45 ml gin, 30 ml Aperol, 25 ml lemon juice, 10 ml simple syrup with ice. Strain into coupe.'
+  },
+  {
+    name: 'Black Russian',
+    ingredients: ['Vodka', 'Coffee liqueur'],
+    instructions:
+      'Build 50 ml vodka and 25 ml coffee liqueur over ice in rocks glass. Stir.'
+  },
+  {
+    name: 'Espresso Tonic',
+    ingredients: ['Espresso', 'Tonic water', 'Simple syrup'],
+    instructions:
+      'Fill glass with ice. Add 120 ml tonic water, 10 ml simple syrup. Float 30 ml fresh espresso on top.'
+  },
+  {
+    name: 'Hurricane',
+    ingredients: ['White rum', 'Dark rum', 'Passion fruit syrup', 'Orange juice', 'Lime juice', 'Grenadine'],
+    instructions:
+      'Shake 30 ml white rum, 30 ml dark rum, 30 ml passion fruit syrup, 60 ml orange juice, 15 ml lime juice, 10 ml grenadine with ice. Strain over fresh ice.'
+  },
+  {
+    name: 'Vanilla Vodka Soda',
+    ingredients: ['Vodka', 'Vanilla syrup', 'Soda water', 'Lemon juice'],
+    instructions:
+      'Build 45 ml vodka, 15 ml vanilla syrup, 15 ml lemon juice over ice. Top with 120 ml soda water. Stir.'
+  },
+  {
+    name: 'Rye Old Fashioned',
+    ingredients: ['Rye whiskey', 'Sugar cube', 'Angostura bitters'],
+    instructions:
+      'Muddle sugar cube with 2 dashes Angostura and splash of water. Add 60 ml rye whiskey and ice. Stir.'
   }
 ];
 
@@ -325,4 +397,3 @@ module.exports = {
   baseIngredients,
   baseDrinks
 };
-
