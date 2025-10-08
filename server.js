@@ -288,6 +288,8 @@ app.get('/api/drinks', (req, res) => {
 
 const insertDrinkStatement = db.prepare('INSERT INTO drinks (name, instructions) VALUES (?, ?)');
 const linkIngredientStatement = db.prepare('INSERT INTO drink_ingredients (drink_id, ingredient_id) VALUES (?, ?)');
+const deleteIngredientStatement = db.prepare('DELETE FROM ingredients WHERE id = ?');
+const deleteDrinkStatement = db.prepare('DELETE FROM drinks WHERE id = ?');
 
 app.post('/api/drinks', (req, res, next) => {
   const validation = validateDrinkPayload(req.body);
@@ -319,6 +321,24 @@ app.post('/api/drinks', (req, res, next) => {
     }
     next(error);
   }
+});
+
+app.delete('/api/ingredients/:id', (req, res) => {
+  const { id } = req.params;
+  const result = deleteIngredientStatement.run(id);
+  if (result.changes === 0) {
+    return res.status(404).json({ message: 'Ingredient not found.' });
+  }
+  res.status(204).end();
+});
+
+app.delete('/api/drinks/:id', (req, res) => {
+  const { id } = req.params;
+  const result = deleteDrinkStatement.run(id);
+  if (result.changes === 0) {
+    return res.status(404).json({ message: 'Drink not found.' });
+  }
+  res.status(204).end();
 });
 
 app.use((err, req, res, next) => {
