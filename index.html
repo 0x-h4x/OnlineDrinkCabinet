@@ -89,23 +89,22 @@
                 aria-label="Selected ingredients"
               ></ul>
               <div class="selector-controls">
-                <input
-                  type="text"
-                  id="drink-ingredient-search"
-                  list="drink-ingredient-catalog"
-                  placeholder="Search ingredients"
+                <select
+                  id="drink-ingredient-select"
                   aria-describedby="drink-ingredient-help"
-                />
+                >
+                  <option value="" disabled selected hidden>Select an ingredient</option>
+                </select>
                 <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
               </div>
             </div>
             <p class="field-help" id="drink-ingredient-help">
-              Search your fridge for existing ingredients or type a new one and press Add.
+              Pick from the ingredients already saved in your fridge and press Add.
             </p>
             <input type="hidden" id="drink-ingredients" />
           </label>
         </div>
-        <datalist id="drink-ingredient-catalog"></datalist>
+        
         <label class="form-control">
           <span>Recipe / Instructions</span>
           <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
@@ -162,23 +161,22 @@
               aria-label="Selected ingredients"
             ></ul>
             <div class="selector-controls">
-              <input
-                type="text"
-                id="drink-ingredient-search"
-                list="drink-ingredient-catalog"
-                placeholder="Search ingredients"
+              <select
+                id="drink-ingredient-select"
                 aria-describedby="drink-ingredient-help"
-              />
+              >
+                <option value="" disabled selected hidden>Select an ingredient</option>
+              </select>
               <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
             </div>
           </div>
           <p class="field-help" id="drink-ingredient-help">
-            Search your fridge for existing ingredients or type a new one and press Add.
+            Pick from the ingredients already saved in your fridge and press Add.
           </p>
           <input type="hidden" id="drink-ingredients" />
         </label>
       </div>
-      <datalist id="drink-ingredient-catalog"></datalist>
+      
       <label class="form-control">
         <span>Recipe / Instructions</span>
         <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
