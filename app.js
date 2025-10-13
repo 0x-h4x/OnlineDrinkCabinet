@@ -405,7 +405,7 @@ function resolveIngredientName(value) {
   const cleanValue = normaliseIngredientInput(value || '');
   if (!cleanValue) return '';
   const existing = state.ingredients.find((item) => item.name.toLowerCase() === cleanValue.toLowerCase());
-  return existing ? existing.name : '';
+  return existing ? existing.name : cleanValue;
 }
 
 function renderSelectedDrinkIngredients() {
