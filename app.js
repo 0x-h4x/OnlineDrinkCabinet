@@ -187,7 +187,6 @@ function updateIngredientCatalog() {
     placeholder.value = '';
     placeholder.disabled = true;
     placeholder.selected = true;
-    placeholder.hidden = true;
     placeholder.textContent = 'Select an ingredient';
     elements.drinkIngredientSelect.append(placeholder);
 
@@ -405,7 +404,7 @@ function resolveIngredientName(value) {
   const cleanValue = normaliseIngredientInput(value || '');
   if (!cleanValue) return '';
   const existing = state.ingredients.find((item) => item.name.toLowerCase() === cleanValue.toLowerCase());
-  return existing ? existing.name : cleanValue;
+  return existing ? existing.name : '';
 }
 
 function renderSelectedDrinkIngredients() {
@@ -417,7 +416,7 @@ function renderSelectedDrinkIngredients() {
   if (state.drinkFormIngredients.length === 0) {
     const empty = document.createElement('li');
     empty.className = 'selector-empty';
-    empty.textContent = 'No ingredients yet. Choose an ingredient below and press Add.';
+    empty.textContent = 'No ingredients yet. Choose from the dropdown below.';
     list.append(empty);
     return;
   }
@@ -516,9 +515,6 @@ function resetDrinkForm() {
   state.drinkFormIngredients = [];
   if (elements.drinkForm) {
     elements.drinkForm.reset();
-  }
-  if (elements.addDrinkPanel) {
-    elements.addDrinkPanel.removeAttribute('open');
   }
   if (elements.drinkIngredientSelect) {
     elements.drinkIngredientSelect.value = '';
@@ -841,6 +837,10 @@ function handleDrinkSearchInput(event) {
   renderDrinks();
 }
 
+function handleDrinkIngredientSelection(event) {
+  addDrinkIngredient(event.target.value);
+}
+
 function handleSelectedIngredientClick(event) {
   const button = event.target.closest('button[data-index]');
   if (!button) return;
@@ -855,28 +855,6 @@ function handleAddIngredientButton() {
   }
 }
 
-function handleAddDrinkPanelToggle() {
-  scheduleDrinksPanelHeightUpdate();
-  if (elements.addDrinkPanel?.open && elements.drinkName) {
-    elements.drinkName.focus();
-  }
-}
-
-function handleDrinkIngredientChange() {
-  if (elements.drinkIngredientSelect) {
-    elements.drinkIngredientSelect.setCustomValidity('');
-  }
-}
-
-function handleDrinkIngredientKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    if (elements.drinkIngredientSelect) {
-      addDrinkIngredient(elements.drinkIngredientSelect.value);
-    }
-  }
-}
-
 function setupEventListeners() {
   elements.ingredientForm?.addEventListener('submit', handleIngredientSubmit);
   elements.ingredientCategory?.addEventListener('change', () => {
@@ -888,8 +866,7 @@ function setupEventListeners() {
   elements.drinkForm?.addEventListener('submit', handleDrinkSubmit);
   elements.filterGroup?.addEventListener('click', handleFilterClick);
   elements.drinkSearch?.addEventListener('input', handleDrinkSearchInput);
-  elements.drinkIngredientSelect?.addEventListener('change', handleDrinkIngredientChange);
-  elements.drinkIngredientSelect?.addEventListener('keydown', handleDrinkIngredientKeydown);
+  elements.drinkIngredientSelect?.addEventListener('change', handleDrinkIngredientSelection);
   elements.selectedDrinkIngredients?.addEventListener('click', handleSelectedIngredientClick);
   elements.addIngredientToDrink?.addEventListener('click', handleAddIngredientButton);
   elements.addDrinkPanel?.addEventListener('toggle', handleAddDrinkPanelToggle);

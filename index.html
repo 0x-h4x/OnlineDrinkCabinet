@@ -73,47 +73,44 @@
         <p>Browse existing drinks or add your own favourites.</p>
       </div>
 
-      <details id="add-drink-panel" class="add-drink-panel">
-        <summary class="add-drink-summary">Add a new drink</summary>
-        <form id="add-drink-form" class="stacked-form" autocomplete="off">
-          <div class="form-row">
-            <label class="form-control">
-              <span>Drink name</span>
-              <input type="text" id="drink-name" placeholder="e.g. French 75" required />
-            </label>
-            <label class="form-control">
-              <span>Ingredients</span>
-              <div class="ingredient-selector">
-                <ul
-                  id="selected-ingredients"
-                  class="selected-ingredients"
-                  aria-live="polite"
-                  aria-label="Selected ingredients"
-                ></ul>
-                <div class="selector-controls">
-                  <select
-                    id="drink-ingredient-select"
-                    aria-describedby="drink-ingredient-help"
-                  >
-                    <option value="" disabled selected hidden>Select an ingredient</option>
-                  </select>
-                  <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
-                </div>
-              </div>
-              <p class="field-help" id="drink-ingredient-help">
-                Pick from the ingredients already saved in your fridge and press Add.
-              </p>
-              <input type="hidden" id="drink-ingredients" />
-            </label>
-          </div>
-
+      <form id="add-drink-form" class="stacked-form" autocomplete="off">
+        <div class="form-row">
           <label class="form-control">
-            <span>Recipe / Instructions</span>
-            <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
+            <span>Drink name</span>
+            <input type="text" id="drink-name" placeholder="e.g. French 75" required />
           </label>
-          <button type="submit" class="primary-btn">Add drink</button>
-        </form>
-      </details>
+          <label class="form-control">
+            <span>Ingredients</span>
+            <div class="ingredient-selector">
+              <ul
+                id="selected-ingredients"
+                class="selected-ingredients"
+                aria-live="polite"
+                aria-label="Selected ingredients"
+              ></ul>
+              <div class="selector-controls">
+                <select
+                  id="drink-ingredient-select"
+                  aria-describedby="drink-ingredient-help"
+                >
+                  <option value="" disabled selected hidden>Select an ingredient</option>
+                </select>
+                <button type="button" id="add-ingredient-to-drink" class="secondary-btn">Add</button>
+              </div>
+            </div>
+            <p class="field-help" id="drink-ingredient-help">
+              Pick from the ingredients already saved in your fridge and press Add.
+            </p>
+            <input type="hidden" id="drink-ingredients" />
+          </label>
+        </div>
+        
+        <label class="form-control">
+          <span>Recipe / Instructions</span>
+          <textarea id="drink-recipe" rows="3" placeholder="Write the preparation steps" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Add drink</button>
+      </form>
 
       <div class="drink-toolbar">
         <label class="drink-search">
