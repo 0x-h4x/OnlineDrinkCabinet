@@ -27,6 +27,7 @@ const elements = {
   resetInventory: document.getElementById('reset-inventory'),
   ingredientCatalog: document.getElementById('ingredient-catalog'),
   drinkForm: document.getElementById('add-drink-form'),
+  addDrinkPanel: document.getElementById('add-drink-panel'),
   drinkName: document.getElementById('drink-name'),
   drinkIngredientSelect: document.getElementById('drink-ingredient-select'),
   selectedDrinkIngredients: document.getElementById('selected-ingredients'),
@@ -524,6 +525,7 @@ function resetDrinkForm() {
   }
   renderSelectedDrinkIngredients();
   updateDrinkFormState();
+  scheduleDrinksPanelHeightUpdate();
 }
 
 function summariseDrink(drink) {
@@ -867,6 +869,7 @@ function setupEventListeners() {
   elements.drinkIngredientSelect?.addEventListener('change', handleDrinkIngredientSelection);
   elements.selectedDrinkIngredients?.addEventListener('click', handleSelectedIngredientClick);
   elements.addIngredientToDrink?.addEventListener('click', handleAddIngredientButton);
+  elements.addDrinkPanel?.addEventListener('toggle', handleAddDrinkPanelToggle);
   elements.themeToggle?.addEventListener('click', handleThemeToggle);
 }
 

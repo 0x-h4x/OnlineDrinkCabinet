@@ -345,6 +345,71 @@ body.modal-open-fallback::after {
   margin-bottom: 1.5rem;
 }
 
+.add-drink-panel {
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-drink-panel:not([open]) {
+  margin-bottom: 1rem;
+  background: transparent;
+}
+
+.add-drink-panel[open] {
+  background: var(--card-bg);
+}
+
+.add-drink-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--summary-text);
+  list-style: none;
+  background: var(--card-bg);
+  border-radius: 14px;
+}
+
+.add-drink-summary::-webkit-details-marker {
+  display: none;
+}
+
+.add-drink-summary:focus-visible {
+  outline: 2px solid var(--summary-marker);
+  outline-offset: 2px;
+}
+
+.add-drink-summary::before {
+  content: '';
+  width: 0.65rem;
+  height: 0.65rem;
+  border-right: 2px solid var(--summary-marker);
+  border-bottom: 2px solid var(--summary-marker);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.add-drink-panel[open] .add-drink-summary::before {
+  transform: rotate(225deg);
+}
+
+.add-drink-panel[open] .add-drink-summary {
+  border-radius: 14px 14px 0 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.add-drink-panel > .stacked-form {
+  margin: 0;
+  padding: 0 1.1rem 1.1rem;
+  border-top: 1px solid var(--card-border);
+}
+
 .form-control {
   display: grid;
   gap: 0.35rem;
